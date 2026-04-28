@@ -2,3 +2,4 @@
 1741012665599;Centru Vaccinare Casa Tineretului
 6050930420039;Centru Vaccinare Casa Tineretului
 6050930420039;Centru Mobil Vaccinare Comuna Chiajna
+6050930420039;Centru Vaccinare Policlinica
