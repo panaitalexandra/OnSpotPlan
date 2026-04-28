@@ -1,0 +1,5 @@
+Lista emailuri cu programarea confirmata
+a@yahoo.com
+a@yahoo.com
+user@gmail.com
+nou@gmail.com
