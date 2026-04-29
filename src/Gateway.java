@@ -1,10 +1,8 @@
 import py4j.GatewayServer;
 
 public class Gateway {
-    private ManagerProgramari manager = new ManagerProgramari();
-
-    public ManagerProgramari getManager() {
-        return manager;
+    public ManagerUtilizatori getManagerUtilizatori() {
+        return ManagerUtilizatori.getInstance();
     }
     public String test() {
         return "legatura stabilita";

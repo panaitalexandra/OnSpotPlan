@@ -109,7 +109,7 @@ public class FereastraMeniu extends JFrame {
                 lLocalitate = new JLabel("   Localitate: " + localitate);
                 lVarsta = new JLabel("   Vârstă: " + b.getVarsta());
                 lRisc = new JLabel("   Grupă de risc: " + b.getCategoriaRisc());
-                lDizabilitati = new JLabel( "   " + b.estePersoanaCuDizabilitati());
+                //lDizabilitati = new JLabel( "   " + b.estePersoanaCuDizabilitati());
                 
                 pInfo.add(lNume);
                 pInfo.add(lPrenume);

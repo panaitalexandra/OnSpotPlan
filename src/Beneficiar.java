@@ -7,17 +7,17 @@ import java.time.*;
 public class Beneficiar {
     private int varsta;
     private Persoana p;
-    private String dizabilitate;
+    //private String dizabilitate;
 
     public Beneficiar(String nume, String prenume, String cnp, String dizabilitate){
         p = new Persoana(nume, prenume, cnp);
-        this.dizabilitate = dizabilitate != null ? dizabilitate : estePersoanaCuDizabilitati();
+        //this.dizabilitate = dizabilitate != null ? dizabilitate : estePersoanaCuDizabilitati();
         this.varsta = calculeazaVarsta(cnp);
     }
     public Beneficiar(String nume, String prenume, String cnp, String serie, String numar, String judet, String localitate, String dizabilitate) {
         this.p = new Persoana(nume, prenume, cnp, serie, numar, judet, localitate);
         this.varsta = calculeazaVarsta(cnp);
-        this.dizabilitate = dizabilitate != null ? dizabilitate : estePersoanaCuDizabilitati();
+        //this.dizabilitate = dizabilitate != null ? dizabilitate : estePersoanaCuDizabilitati();
     }
     public Persoana getPersoana(){
         p.setCarteIdentitate(p.getCarteIdentitate());
@@ -53,15 +53,15 @@ public class Beneficiar {
             return "Categoria a II-a A";
         return "Fără risc major";
     }
-    public String estePersoanaCuDizabilitati() {
-        return dizabilitate;
-    }
+//    public String estePersoanaCuDizabilitati() {
+//        return dizabilitate;
+//    }
     public int getVarsta() {
         return varsta;
     }
     @Override
     public String toString() {
-        return p.getNume() + " " + p.getPrenume() + ", CNP: " + p.getCNP() + ", varsta: " + varsta + ", risc: " + dizabilitate;
+        return p.getNume() + " " + p.getPrenume() + ", CNP: " + p.getCNP() + ", varsta: " + varsta;// + ", risc: " + dizabilitate;
     }
     @Override
     public boolean equals(Object o) {

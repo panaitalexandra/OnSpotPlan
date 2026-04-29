@@ -54,8 +54,8 @@ public class ManagerBeneficiari {
                         b.getPersoana().getCarteIdentitate().getSerie(),
                         b.getPersoana().getCarteIdentitate().getNumar(),
                         b.getPersoana().getCarteIdentitate().getJudet(),
-                        b.getPersoana().getCarteIdentitate().getLocalitate(),
-                        b.estePersoanaCuDizabilitati()
+                        b.getPersoana().getCarteIdentitate().getLocalitate()
+                        //b.estePersoanaCuDizabilitati()
                 ));
         } catch (IOException e) { e.printStackTrace(); }
     }
