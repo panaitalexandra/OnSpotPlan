@@ -4,7 +4,6 @@
  */
 import java.io.*;
 import java.util.*;
-import javax.swing.*;
 
 public class ManagerUtilizatori {
     private ArrayList<Utilizator> users;
@@ -38,18 +37,26 @@ public class ManagerUtilizatori {
         
         }
     }
+    // Adaugă aceste metode în ManagerUtilizatori.java pentru a fi apelate din Python
+    public boolean isEmailValid(String email) {
+        return ValidatorEmail.esteValid(email);
+    }
+
+    public boolean isParolaValida(String parola) {
+        return ValidatorParola.esteValida(parola);
+    }
     public Utilizator inregistreazaUtilizator(String email, String parola){
         if (!ValidatorEmail.esteValid(email)) {
-            JOptionPane.showMessageDialog(null, "Email invalid!");
+            //JOptionPane.showMessageDialog(null, "Email invalid!");
             return null;
         }
         if (!ValidatorParola.esteValida(parola)) {
-            JOptionPane.showMessageDialog(null, """
-                                                Parola trebuie să conțină cel puțin 8 caractere dintre care:
-                                                - o majusculă
-                                                - o minusculă
-                                                - o cifra
-                                                - un caracter special: #, $, * """);
+//            JOptionPane.showMessageDialog(null, """
+//                                                Parola trebuie să conțină cel puțin 8 caractere dintre care:
+//                                                - o majusculă
+//                                                - o minusculă
+//                                                - o cifra
+//                                                - un caracter special: #, $, * """);
             return null;
         }    
         var user = new Utilizator(email, parola);

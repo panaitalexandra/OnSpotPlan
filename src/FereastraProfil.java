@@ -13,7 +13,7 @@ public class FereastraProfil extends JFrame {
     private JCheckBox cbOption;
     private JComboBox<String> cbJudet, cbLocalitate;
     private FereastraMeniu f;
-    private Beneficiar b;
+    private Client b;
 
     public FereastraProfil(FereastraMeniu f) {//constructorul primeste paramatrul pentru a se realiza comunicarea intre cele doua ferestre
         super("Completare profil");      
@@ -110,7 +110,7 @@ public class FereastraProfil extends JFrame {
             }
 
             String dizabilitati = cbOption.isSelected() ? "Persoană cu dizabilități" : "Persoană fără dizabilități";
-            b = new Beneficiar(nume, prenume, cnp, serie, numar, judet, localitate, dizabilitati);
+            b = new Client(nume, prenume, cnp, serie, numar, judet, localitate, dizabilitati);
 
             if (b.calculeazaVarsta(cnp) >= 17) {
                 f.adaugaBeneficiarInTabel(b);

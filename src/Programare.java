@@ -5,15 +5,15 @@
 import java.time.*;
 
 public class Programare {
-    private Beneficiar beneficiar;
+    private Client client;
     private String centruVaccinare;
     private LocalDate data;
     private LocalTime ora;
     private Vaccin tipVaccin; // AstraZeneca, Pfizer, Moderna
     private LocalDate dataRapel;
 
-    public Programare(Beneficiar beneficiar, String centruVaccinare, LocalDate data, LocalTime ora, Vaccin tipVaccin) {
-        this.beneficiar = beneficiar;
+    public Programare(Client client, String centruVaccinare, LocalDate data, LocalTime ora, Vaccin tipVaccin) {
+        this.client = client;
         this.centruVaccinare = centruVaccinare;
         this.data = data;
         this.ora = ora;
@@ -25,8 +25,8 @@ public class Programare {
         return zile > 0 ? primaDoza.plusDays(zile) : null;
     }    
     
-    public Beneficiar getBeneficiar() {
-        return beneficiar;
+    public Client getBeneficiar() {
+        return client;
     }
     public LocalDate getData() {
         return data;
@@ -40,7 +40,7 @@ public class Programare {
 
     @Override
     public String toString() {
-        return "Programare pentru " + beneficiar.getPersoana().getNume() + " " + beneficiar.getPersoana().getPrenume() +
+        return "Programare pentru " + client.getPersoana().getNume() + " " + client.getPersoana().getPrenume() +
                "\nCentrul: " + centruVaccinare +
                "\nData: " + data + " la ora " + ora +
                "\nVaccin: " + tipVaccin +
@@ -48,9 +48,9 @@ public class Programare {
     }
 
     public String toFileString() {
-        return beneficiar.getPersoana().getNume() + ";" +
-                beneficiar.getPersoana().getPrenume() + ";" +
-                beneficiar.getPersoana().getCNP() + ";" +
+        return client.getPersoana().getNume() + ";" +
+                client.getPersoana().getPrenume() + ";" +
+                client.getPersoana().getCNP() + ";" +
                 centruVaccinare + ";" +
                 data.toString() + ";" +
                 ora.toString() + ";" +

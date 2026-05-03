@@ -4,6 +4,9 @@ public class Gateway {
     public ManagerUtilizatori getManagerUtilizatori() {
         return ManagerUtilizatori.getInstance();
     }
+    public EventService getLocatieService() {
+        return EventService.getInstance(); // Punctul de acces pentru Explore Events
+    }
     public String test() {
         return "legatura stabilita";
     }

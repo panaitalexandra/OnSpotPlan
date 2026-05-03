@@ -1,17 +1,17 @@
 import java.util.*;
 import java.io.*;
-import javax.swing.*;
+
 /**
  *
  * @author Panait Claudia-Alexandra
  */
-public class ManagerBeneficiari {
-    private ArrayList<Beneficiar> beneficiari;
+public class ManagerClienti {
+    private ArrayList<Client> clienti;
     private String fisier;
-    private static Map<String, ManagerBeneficiari> instante = new HashMap<>();
+    private static Map<String, ManagerClienti> instante = new HashMap<>();
 
-    private ManagerBeneficiari(String userId) {
-        beneficiari = new ArrayList<>();
+    private ManagerClienti(String userId) {
+        clienti = new ArrayList<>();
         this.fisier = "beneficiari_" + userId + ".txt";
         incarcaDinFisier();
     }
@@ -27,26 +27,32 @@ public class ManagerBeneficiari {
             String linie;
             while ((linie = br.readLine()) != null) {
                 String[] parts = linie.split("_");
+
                 if (parts.length == 8) {
-                    Beneficiar b = new Beneficiar(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7]);
-                    beneficiari.add(b);
+                    Client b = new Client(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7]);
+                    clienti.add(b);
+                }
+
+                else if (parts.length == 7) {
+                    Client c = new Client(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], "Nespecificat");
+                    clienti.add(c);
                 }
             }
         } catch (IOException e) { e.printStackTrace(); }
     }
 
-    public boolean adaugaBeneficiar(Beneficiar b) {
-        beneficiari.add(b);
+    public boolean adaugaBeneficiar(Client b) {
+        clienti.add(b);
         salveaza();
         return true;
     }
     public boolean poateAdaugaBeneficiar() {
-        return beneficiari.size() < 10;
+        return clienti.size() < 10;
     }
 
     public void salveaza() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(fisier))) {
-            for (Beneficiar b : beneficiari)
+            for (Client b : clienti)
                 pw.println(String.join("_",
                         b.getPersoana().getNume(),
                         b.getPersoana().getPrenume(),
@@ -54,18 +60,18 @@ public class ManagerBeneficiari {
                         b.getPersoana().getCarteIdentitate().getSerie(),
                         b.getPersoana().getCarteIdentitate().getNumar(),
                         b.getPersoana().getCarteIdentitate().getJudet(),
-                        b.getPersoana().getCarteIdentitate().getLocalitate()
-                        //b.estePersoanaCuDizabilitati()
+                        b.getPersoana().getCarteIdentitate().getLocalitate(),
+                        b.getTelefon()
                 ));
         } catch (IOException e) { e.printStackTrace(); }
     }
-    public ArrayList<Beneficiar> getLista() {
-        return beneficiari;
+    public ArrayList<Client> getLista() {
+        return clienti;
     }
 
-    public static ManagerBeneficiari getInstance(String userId) {
+    public static ManagerClienti getInstance(String userId) {
         if (!instante.containsKey(userId)) {
-            instante.put(userId, new ManagerBeneficiari(userId));
+            instante.put(userId, new ManagerClienti(userId));
         }
         return instante.get(userId);
     }

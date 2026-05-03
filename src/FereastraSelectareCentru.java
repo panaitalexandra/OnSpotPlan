@@ -10,15 +10,15 @@ public class FereastraSelectareCentru extends JFrame {
     private JTable tabelCentre;
     private DefaultTableModel modelTabel;
     private JButton bInregistreaza, bInapoi;
-    private Beneficiar beneficiar;
+    private Client client;
     private EmailService notificator = new EmailService();
     private JFrame f;
     private CredentialeUtilizator user = CredentialeUtilizator.getInstance();
     private Timer timer;
 
-    public FereastraSelectareCentru(String judet, Beneficiar b) {
+    public FereastraSelectareCentru(String judet, Client b) {
         super("Centre vaccinare - " + judet);
-        this.beneficiar = b;
+        this.client = b;
         modelTabel = new DefaultTableModel(new String[]{"Nume Centru"}, 0);
         tabelCentre = new JTable(modelTabel);
         JScrollPane scroll = new JScrollPane(tabelCentre);
@@ -45,8 +45,8 @@ public class FereastraSelectareCentru extends JFrame {
                 return;
             }
             String numeCentru = (String) modelTabel.getValueAt(index, 0);
-            String nume = beneficiar.getPersoana().getNume();
-            String prenume = beneficiar.getPersoana().getPrenume();
+            String nume = client.getPersoana().getNume();
+            String prenume = client.getPersoana().getPrenume();
 
             if (!esteInListaAsteptare(nume, prenume, numeCentru)) {
                 inregistreazaInListaAsteptare(nume, prenume, numeCentru);
@@ -60,7 +60,7 @@ public class FereastraSelectareCentru extends JFrame {
                 f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
                 timer = new Timer(400, x -> {
-                    notificator.adaugaNotificare(beneficiar.getPersoana().getCNP(), numeCentru);
+                    notificator.adaugaNotificare(client.getPersoana().getCNP(), numeCentru);
                     timer.stop();
                 });
                 timer.start();
@@ -86,7 +86,7 @@ public class FereastraSelectareCentru extends JFrame {
 
         bInapoi.addActionListener(e -> {
             FereastraSelectareCentru.this.dispose();
-            var f = new FereastraFiltrareCentre(beneficiar);
+            var f = new FereastraFiltrareCentre(client);
             f.setSize(300, 180);
             f.setLocationRelativeTo(null);
             f.setVisible(true);

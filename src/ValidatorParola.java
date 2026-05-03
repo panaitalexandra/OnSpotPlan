@@ -2,30 +2,19 @@
  *
  * @author Panait Claudia-Alexandra
  */
+import java.util.regex.Pattern;
+
 public class ValidatorParola {
+    // (?=.*[0-9]) -> cel puțin o cifră[cite: 3]
+    // (?=.*[a-z]) -> cel puțin o minusculă[cite: 3]
+    // (?=.*[A-Z]) -> cel puțin o majusculă[cite: 3]
+    // (?=.*[#$*]) -> cel puțin un simbol din setul tău (#, $, *)[cite: 3]
+    // .{8,}       -> lungime minimă 8[cite: 3]
+    private static final String PASSWORD_PATTERN =
+            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[#$*]).{8,}$";
+
     public static boolean esteValida(String parola) {
-        if (parola.length() < 8)
-            return false;
-
-        boolean contineLiteraMare = false;
-        boolean contineLiteraMica = false;
-        boolean contineCifra = false;
-        boolean contineSimbol = false;
-
-        for (int i = 0; i < parola.length(); i++) {
-            char c = parola.charAt(i);
-            if (Character.isUpperCase(c)) contineLiteraMare = true;
-            if (Character.isLowerCase(c)) contineLiteraMica = true;
-            if (Character.isDigit(c))     contineCifra = true;
-            if (c == '#' || c == '$' || c == '*') contineSimbol = true;
-        }
-
-        // Regulile impuse
-        if (!contineLiteraMare) return false;               
-        if (!contineLiteraMica) return false;              
-        if (!contineCifra) return false;                  
-        if (!contineSimbol) return false;                  
-
-        return true;
+        if (parola == null) return false;
+        return Pattern.matches(PASSWORD_PATTERN, parola);
     }
 }

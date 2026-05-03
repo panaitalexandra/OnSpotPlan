@@ -6,12 +6,12 @@ public class Persoana {
     private String nume, prenume, email, parola;
     private ActIdentitate buletin;
     
-    public Persoana(String nume, String prenume, String cnp){// constructor necesar pentru clasa Beneficiar
+    public Persoana(String nume, String prenume, String cnp){// constructor necesar pentru clasa Client
         this.nume = nume;
         this.prenume = prenume;
         this.buletin = new ActIdentitate(cnp);
     }
-    public Persoana(String nume, String prenume, String cnp, String serie, String numar, String jud, String loc){// constructor necesar pentru clasele Beneficiar si Utilizator
+    public Persoana(String nume, String prenume, String cnp, String serie, String numar, String jud, String loc){// constructor necesar pentru clasele Client si Utilizator
         this.nume = nume;
         this.prenume = prenume;
         this.buletin = new ActIdentitate(cnp, serie, numar, jud, loc);

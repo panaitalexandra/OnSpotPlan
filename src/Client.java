@@ -4,20 +4,20 @@
  */
 import java.time.*;
 
-public class Beneficiar {
+public class Client {
     private int varsta;
     private Persoana p;
-    //private String dizabilitate;
+    private String telefon;
 
-    public Beneficiar(String nume, String prenume, String cnp, String dizabilitate){
+    public Client(String nume, String prenume, String cnp, String telefon){
         p = new Persoana(nume, prenume, cnp);
-        //this.dizabilitate = dizabilitate != null ? dizabilitate : estePersoanaCuDizabilitati();
+        this.telefon = telefon;
         this.varsta = calculeazaVarsta(cnp);
     }
-    public Beneficiar(String nume, String prenume, String cnp, String serie, String numar, String judet, String localitate, String dizabilitate) {
+    public Client(String nume, String prenume, String cnp, String serie, String numar, String judet, String localitate, String telefon) {
         this.p = new Persoana(nume, prenume, cnp, serie, numar, judet, localitate);
+        this.telefon = telefon;
         this.varsta = calculeazaVarsta(cnp);
-        //this.dizabilitate = dizabilitate != null ? dizabilitate : estePersoanaCuDizabilitati();
     }
     public Persoana getPersoana(){
         p.setCarteIdentitate(p.getCarteIdentitate());
@@ -48,17 +48,18 @@ public class Beneficiar {
         }
     }
 
-    public String getCategoriaRisc() {
-        if (varsta >= 65)
-            return "Categoria a II-a A";
-        return "Fără risc major";
-    }
-//    public String estePersoanaCuDizabilitati() {
-//        return dizabilitate;
-//    }
     public int getVarsta() {
         return varsta;
     }
+
+    public String getTelefon() {
+        return telefon;
+    }
+
+    public void setTelefon(String telefon) {
+        this.telefon = telefon;
+    }
+
     @Override
     public String toString() {
         return p.getNume() + " " + p.getPrenume() + ", CNP: " + p.getCNP() + ", varsta: " + varsta;// + ", risc: " + dizabilitate;
@@ -67,7 +68,7 @@ public class Beneficiar {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Beneficiar that = (Beneficiar) o;
+        Client that = (Client) o;
         return p.getCNP().equals(that.p.getCNP());
     }
 }

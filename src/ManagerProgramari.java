@@ -26,7 +26,7 @@ public class ManagerProgramari {
         return true;
     }
 
-    public boolean stergeProgramare(Beneficiar b) {
+    public boolean stergeProgramare(Client b) {
         boolean modificat = false;
         Iterator<Programare> it = programari.iterator();
         while (it.hasNext()) {
@@ -41,7 +41,7 @@ public class ManagerProgramari {
         return modificat;
     }
 
-    public List<Programare> getProgramariPentruBeneficiar(Beneficiar b) {
+    public List<Programare> getProgramariPentruBeneficiar(Client b) {
         List<Programare> rez = new ArrayList<>();
         for (Programare p : programari)
             if (p.getBeneficiar().equals(b))
@@ -67,7 +67,7 @@ public class ManagerProgramari {
                     LocalTime ora = LocalTime.parse(parti[5]);
                     String vaccin = parti[6];
 
-                    Beneficiar b = new Beneficiar(nume, prenume, cnp, null);
+                    Client b = new Client(nume, prenume, cnp, null);
                     Vaccin tipVaccin = new Vaccin(vaccin);
                     Programare p = new Programare(b, centru, data, ora, tipVaccin);
                     programari.add(p);

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Utilizator {
 
-    private List<Beneficiar> beneficiari;
+    private List<Client> beneficiari;
     private boolean profilComplet;
     private Persoana p;
    

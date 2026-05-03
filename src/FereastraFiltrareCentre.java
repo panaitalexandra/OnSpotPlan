@@ -8,12 +8,12 @@ public class FereastraFiltrareCentre extends JFrame{
     private JFrame f;
     private JComboBox<String> cbJudet;
     private JButton bFiltreaza, bInapoi;
-    private Beneficiar beneficiar;
+    private Client client;
     private CredentialeUtilizator user = CredentialeUtilizator.getInstance();
 
-    public FereastraFiltrareCentre(Beneficiar b){
+    public FereastraFiltrareCentre(Client b){
         super("Filtrare centre");
-        this.beneficiar = b;
+        this.client = b;
 
         cbJudet = new JComboBox();
         bFiltreaza = new JButton("Filtrează");
@@ -33,7 +33,7 @@ public class FereastraFiltrareCentre extends JFrame{
         bFiltreaza.addActionListener(e -> {
             String judet = (String) cbJudet.getSelectedItem();
             FereastraFiltrareCentre.this.dispose();
-            f = new FereastraSelectareCentru(judet, beneficiar);
+            f = new FereastraSelectareCentru(judet, client);
             f.setVisible(true);
             f.setSize(500, 200);
             f.setResizable(false);

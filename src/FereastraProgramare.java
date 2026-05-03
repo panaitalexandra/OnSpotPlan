@@ -20,18 +20,18 @@ public class FereastraProgramare extends JFrame{
     private Locale localeRO = new Locale("ro", "RO");
     private Map<LocalDate, Integer> locuriDisponibilePeZile = new LinkedHashMap<>();
     private JFrame f;
-    private Beneficiar beneficiar;
+    private Client client;
     private CredentialeUtilizator user = CredentialeUtilizator.getInstance();
     private EmailService EmailService;
 
-    public FereastraProgramare(Beneficiar beneficiar, String centru) {
-        this(beneficiar, centru, YearMonth.now().plusMonths(1));
+    public FereastraProgramare(Client client, String centru) {
+        this(client, centru, YearMonth.now().plusMonths(1));
     }
 
-    public FereastraProgramare(Beneficiar beneficiar, String centru, YearMonth lunaDisponibila) {
+    public FereastraProgramare(Client client, String centru, YearMonth lunaDisponibila) {
         super("Programare vaccinare - " + centru);
         this.centruVaccinare = centru;
-        this.beneficiar = beneficiar;
+        this.client = client;
 
         incarcaLocuriDisponibileDinFisier(lunaDisponibila);
         locuriDisponibilePeZile = genereazaLocuriDisponibile(lunaDisponibila);
@@ -171,7 +171,7 @@ public class FereastraProgramare extends JFrame{
 
         Vaccin vaccin = Vaccin.alegeVaccin();
         LocalDate dataRapel = dataSelectata.plusDays(vaccin.getZilePanaLaRapel());
-        Programare p = new Programare(beneficiar, centruVaccinare, dataSelectata, oraS, vaccin);
+        Programare p = new Programare(client, centruVaccinare, dataSelectata, oraS, vaccin);
 
         ManagerProgramari manager = new ManagerProgramari();
         boolean adaugat = manager.adaugaProgramare(p);
@@ -184,7 +184,7 @@ public class FereastraProgramare extends JFrame{
         incarcaTabelCuZile(YearMonth.from(dataSelectata));
 
         String mesaj = "Destinatar: " + user.getUser() + "\nConfirmare programare pentru beneficiarul înregistrat în sistem\n" +
-                "Nume: " + beneficiar.getPersoana().getNume() + " " + beneficiar.getPersoana().getPrenume() + "\n" +
+                "Nume: " + client.getPersoana().getNume() + " " + client.getPersoana().getPrenume() + "\n" +
                 "Centru vaccinare: " + centruVaccinare + "\n" +
                 "Data: " + dataSelectata + " (" + dataSelectata.getDayOfWeek().getDisplayName(TextStyle.FULL, localeRO) + ")\n" +
                 "Ora: " + ora + "\n" +

@@ -19,7 +19,7 @@ public class FereastraMeniu extends JFrame {
     private JButton bVizualizeaza, bProgrameaza, bStergeProgramare, bAdaugaProfil;
     private JTable tabelBeneficiari;
     private DefaultTableModel modelTabel;
-    private ManagerBeneficiari managerBeneficiari;
+    private ManagerClienti managerClienti;
     private ManagerProgramari managerProgramari;
     private ManagerListaAsteptare managerListaAsteptare;
     private String emailUtilizator;
@@ -27,7 +27,7 @@ public class FereastraMeniu extends JFrame {
     public FereastraMeniu(String emailUtilizator) {
         super("Aplicație Vaccinare");
         this.emailUtilizator = emailUtilizator;
-        managerBeneficiari = ManagerBeneficiari.getInstance(emailUtilizator);
+        managerClienti = ManagerClienti.getInstance(emailUtilizator);
         managerProgramari = new ManagerProgramari();
         managerListaAsteptare = ManagerListaAsteptare.getInstance();
         managerListaAsteptare.incarcaDinFisier("listaAsteptare.txt");
@@ -37,7 +37,7 @@ public class FereastraMeniu extends JFrame {
         JScrollPane scrollPane = new JScrollPane(tabelBeneficiari);
         scrollPane.setPreferredSize(new Dimension(350, 300));
 
-        for (Beneficiar b : managerBeneficiari.getLista()) 
+        for (Client b : managerClienti.getLista())
             modelTabel.addRow(new Object[]{b.getPersoana().getNume(), b.getPersoana().getPrenume(), b.getPersoana().getCNP() } );
                   
         JPanel pList = new JPanel(new BorderLayout());
@@ -64,7 +64,7 @@ public class FereastraMeniu extends JFrame {
         bStergeProgramare.addActionListener(new ButtonListener());
         
         bAdaugaProfil.addActionListener(e -> {
-            if(managerBeneficiari.poateAdaugaBeneficiar()) {
+            if(managerClienti.poateAdaugaBeneficiar()) {
                 FereastraProfil fProfil = new FereastraProfil(FereastraMeniu.this);
                 fProfil.setSize(600, 400);
                 fProfil.setLocationRelativeTo(null);
@@ -89,7 +89,7 @@ public class FereastraMeniu extends JFrame {
                     return;
                 }
 
-                Beneficiar b = managerBeneficiari.getLista().get(index);
+                Client b = managerClienti.getLista().get(index);
                 ActIdentitate act = b.getPersoana().getCarteIdentitate();
 
                 String serie = (act != null && act.getSerie() != null) ? act.getSerie() : "necunoscută";
@@ -108,7 +108,6 @@ public class FereastraMeniu extends JFrame {
                 lJudet = new JLabel("   Județ: " + judet);
                 lLocalitate = new JLabel("   Localitate: " + localitate);
                 lVarsta = new JLabel("   Vârstă: " + b.getVarsta());
-                lRisc = new JLabel("   Grupă de risc: " + b.getCategoriaRisc());
                 //lDizabilitati = new JLabel( "   " + b.estePersoanaCuDizabilitati());
                 
                 pInfo.add(lNume);
@@ -143,7 +142,7 @@ public class FereastraMeniu extends JFrame {
                         JOptionPane.showMessageDialog(FereastraMeniu.this, "Selectează un beneficiar pentru programare.");
                         return;
                     }
-                    Beneficiar b = managerBeneficiari.getLista().get(index);
+                    Client b = managerClienti.getLista().get(index);
                     FereastraMeniu.this.setVisible(false);
 
                     boolean continuaInMeniu = false;
@@ -184,7 +183,7 @@ public class FereastraMeniu extends JFrame {
                         return;
                     }
 
-                    Beneficiar b = managerBeneficiari.getLista().get(index);
+                    Client b = managerClienti.getLista().get(index);
                     List<Programare> programari = managerProgramari.getProgramariPentruBeneficiar(b);
 
                     if (programari == null || programari.isEmpty()) {
@@ -241,14 +240,14 @@ public class FereastraMeniu extends JFrame {
         }
     }
 
-    public void adaugaBeneficiarInTabel(Beneficiar b) {
-        if (managerBeneficiari.adaugaBeneficiar(b)) {
+    public void adaugaBeneficiarInTabel(Client b) {
+        if (managerClienti.adaugaBeneficiar(b)) {
             modelTabel.addRow(new Object[]{ b.getPersoana().getNume(), b.getPersoana().getPrenume(), b.getPersoana().getCNP() });
-            managerBeneficiari.salveaza();
+            managerClienti.salveaza();
         }
     }
 
-    private boolean esteInProgramari(Beneficiar b){
+    private boolean esteInProgramari(Client b){
         File f = new File("programari.txt");
         if (!f.exists()) return false;
 
@@ -267,7 +266,7 @@ public class FereastraMeniu extends JFrame {
         return false;
 
     }
-    private boolean esteInListaAsteptare(Beneficiar b) {
+    private boolean esteInListaAsteptare(Client b) {
         File f = new File("listaAsteptare.txt");
         if (!f.exists()) return false;
 
@@ -285,7 +284,7 @@ public class FereastraMeniu extends JFrame {
         } catch (IOException e) { e.printStackTrace(); }
         return false;
     }
-    private String centruDinLista(Beneficiar b) {
+    private String centruDinLista(Client b) {
         File f = new File("listaAsteptare.txt");
         if (!f.exists()) return null;
 

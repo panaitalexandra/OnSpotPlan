@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ManagerListaAsteptare {
     private static ManagerListaAsteptare instance = new ManagerListaAsteptare();
-    private Map<String, List<Beneficiar>> listeAsteptare;
+    private Map<String, List<Client>> listeAsteptare;
 
     public ManagerListaAsteptare() {
         this.listeAsteptare = new HashMap<>();
@@ -18,13 +18,13 @@ public class ManagerListaAsteptare {
     public static ManagerListaAsteptare getInstance() {
         return instance;
     }
-    public void adaugaBeneficiar(String numeCentru, Beneficiar b) {
+    public void adaugaBeneficiar(String numeCentru, Client b) {
         listeAsteptare.putIfAbsent(numeCentru, new ArrayList<>());
         listeAsteptare.get(numeCentru).add(b);
     }
 
     public void stergeBeneficiar(String numeCentru, String cnp) {
-        List<Beneficiar> lista = listeAsteptare.get(numeCentru);
+        List<Client> lista = listeAsteptare.get(numeCentru);
         if (lista != null)
             lista.removeIf(b -> b.getPersoana().getCNP().equals(cnp));
     }
@@ -43,7 +43,7 @@ public class ManagerListaAsteptare {
                     String cnp = parti[2].trim();
                     String centru = parti[3].trim();
 
-                    Beneficiar b = new Beneficiar(nume, prenume, cnp, null);
+                    Client b = new Client(nume, prenume, cnp, null);
                     adaugaBeneficiar(centru, b);
                 }
             }
@@ -57,14 +57,14 @@ public class ManagerListaAsteptare {
     }
 
     public boolean esteInLista(String numeCentru, String cnp) {
-        List<Beneficiar> lista = listeAsteptare.get(numeCentru);
+        List<Client> lista = listeAsteptare.get(numeCentru);
         if (lista == null) return false;
         return lista.stream().anyMatch(b -> b.getPersoana().getCNP().equals(cnp));
     }
     public void salveazaInFisier(String numeFisier) {
         try (PrintWriter pw = new PrintWriter(numeFisier)) {
             for (String centru : listeAsteptare.keySet()) {
-                for (Beneficiar b : listeAsteptare.get(centru)) {
+                for (Client b : listeAsteptare.get(centru)) {
                     pw.println(b.getPersoana().getNume() + ";" +
                             b.getPersoana().getPrenume() + ";" +
                             b.getPersoana().getCNP() + ";" +
