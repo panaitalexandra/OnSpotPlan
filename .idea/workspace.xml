@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb1adb44-9f38-412e-a8b7-0139fdd6d55c" name="Changes" comment="python client" />
+    <list default="true" id="eb1adb44-9f38-412e-a8b7-0139fdd6d55c" name="Changes" comment="add full structure java + py" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,7 +60,15 @@
       <option name="project" value="LOCAL" />
       <updated>1777828790634</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="add full structure java + py">
+      <option name="closed" value="true" />
+      <created>1777829182211</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1777829182211</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -88,6 +96,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="python client" />
-    <option name="LAST_COMMIT_MESSAGE" value="python client" />
+    <MESSAGE value="add full structure java + py" />
+    <option name="LAST_COMMIT_MESSAGE" value="add full structure java + py" />
   </component>
 </project>
