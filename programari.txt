@@ -1,3 +1,0 @@
-Vign;Bogdan;1740810454466;Centru Mobil Vaccinare Comuna Babadag;2025-07-07;08:00;Pfizer
-Usah;Clara;2950202114455;Centru Vaccinare Policlinica Centrală;2025-07-09;08:00;Moderna
-Chirea;Iulian;1741012665599;Centru Vaccinare Casa Tineretului;2025-07-05;11:00;Pfizer
