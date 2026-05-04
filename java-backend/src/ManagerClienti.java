@@ -1,10 +1,6 @@
 import java.util.*;
 import java.io.*;
 
-/**
- *
- * @author Panait Claudia-Alexandra
- */
 public class ManagerClienti {
     private ArrayList<Client> clienti;
     private String fisier;
@@ -12,59 +8,53 @@ public class ManagerClienti {
 
     private ManagerClienti(String userId) {
         clienti = new ArrayList<>();
-        this.fisier = "beneficiari_" + userId + ".txt";
+        this.fisier = "client_" + userId + ".txt";
         incarcaDinFisier();
     }
+
     private void incarcaDinFisier() {
         File f = new File(fisier);
         if (!f.exists()) {
-            try {
-                f.createNewFile();
-            } catch (IOException e) { e.printStackTrace();}
+            try { f.createNewFile(); } catch (IOException e) { e.printStackTrace(); }
             return;
         }
+
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String linie;
             while ((linie = br.readLine()) != null) {
                 String[] parts = linie.split("_");
-
-                if (parts.length == 8) {
-                    Client b = new Client(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7]);
-                    clienti.add(b);
-                }
-
-                else if (parts.length == 7) {
-                    Client c = new Client(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], "Nespecificat");
-                    clienti.add(c);
+                // Verificăm structura: Nume, Prenume, CNP, Judet, Localitate, Telefon (6 câmpuri)
+                if (parts.length == 6) {
+                    // Folosim Constructorul 2 al clasei Client, punem "N/A" pentru Serie/Numar
+                    clienti.add(new Client(parts[0], parts[1], parts[2], "N/A", "N/A", parts[3], parts[4], parts[5]));
                 }
             }
         } catch (IOException e) { e.printStackTrace(); }
     }
 
-    public boolean adaugaBeneficiar(Client b) {
-        clienti.add(b);
+    public boolean adaugaClient(Client c) {
+        clienti.add(c);
         salveaza();
         return true;
-    }
-    public boolean poateAdaugaBeneficiar() {
-        return clienti.size() < 10;
     }
 
     public void salveaza() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(fisier))) {
-            for (Client b : clienti)
+            for (Client c : clienti) {
+                Persoana p = c.getPersoana();
+                // Salvăm atributele esențiale separate prin "_"[cite: 10]
                 pw.println(String.join("_",
-                        b.getPersoana().getNume(),
-                        b.getPersoana().getPrenume(),
-                        b.getPersoana().getCNP(),
-                        b.getPersoana().getCarteIdentitate().getSerie(),
-                        b.getPersoana().getCarteIdentitate().getNumar(),
-                        b.getPersoana().getCarteIdentitate().getJudet(),
-                        b.getPersoana().getCarteIdentitate().getLocalitate(),
-                        b.getTelefon()
+                        p.getNume(),
+                        p.getPrenume(),
+                        p.getCNP(),
+                        p.getCarteIdentitate().getJudet(),
+                p.getCarteIdentitate().getLocalitate(),
+                c.getTelefon()
                 ));
+            }
         } catch (IOException e) { e.printStackTrace(); }
     }
+
     public ArrayList<Client> getLista() {
         return clienti;
     }

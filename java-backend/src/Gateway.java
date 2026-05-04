@@ -4,6 +4,9 @@ public class Gateway {
     public ManagerUtilizatori getManagerUtilizatori() {
         return ManagerUtilizatori.getInstance();
     }
+    public ManagerClienti getManagerClienti(String userId) {
+        return ManagerClienti.getInstance(userId); // Returnează managerul dedicat acelui user
+    }
     public EventService getLocatieService() {
         return EventService.getInstance(); // Punctul de acces pentru Explore Events
     }
