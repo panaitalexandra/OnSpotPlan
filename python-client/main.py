@@ -15,7 +15,8 @@ if __name__ == "__main__":
         login.show()
 
         if login.exec_() == QtWidgets.QDialog.Accepted:
-            dashboard = ExploreApp(gateway, java_manager)
+            user = login.ui.lineEdit_email.text()
+            dashboard = ExploreApp(gateway, java_manager, user)
             dashboard.show()
 
         sys.exit(app.exec_())
