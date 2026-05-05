@@ -42,7 +42,6 @@ public class ManagerClienti {
         try (PrintWriter pw = new PrintWriter(new FileWriter(fisier))) {
             for (Client c : clienti) {
                 Persoana p = c.getPersoana();
-                // Salvăm atributele esențiale separate prin "_"[cite: 10]
                 pw.println(String.join("_",
                         p.getNume(),
                         p.getPrenume(),
@@ -64,5 +63,14 @@ public class ManagerClienti {
             instante.put(userId, new ManagerClienti(userId));
         }
         return instante.get(userId);
+    }
+    // În ManagerClienti.java
+    public boolean actualizeazaClient(int index, Client c) {
+        if (index >= 0 && index < clienti.size()) {
+            clienti.set(index, c); // Înlocuiește vechiul obiect cu cel nou
+            salveaza();
+            return true;
+        }
+        return false;
     }
 }

@@ -3,18 +3,21 @@
  * @author Panait Claudia-Alexandra
  */
 public class Persoana {
-    private String nume, prenume, email, parola;
+    private String nume, prenume, email, parola, telefon;
     private ActIdentitate buletin;
     
-    public Persoana(String nume, String prenume, String cnp){// constructor necesar pentru clasa Client
+    public Persoana(String nume, String prenume, String cnp, String telefon){// constructor necesar pentru clasa Client
         this.nume = nume;
         this.prenume = prenume;
         this.buletin = new ActIdentitate(cnp);
+        this.telefon = telefon;
     }
-    public Persoana(String nume, String prenume, String cnp, String serie, String numar, String jud, String loc){// constructor necesar pentru clasele Client si Utilizator
+    public Persoana(String nume, String prenume, String cnp, String serie, String numar, String jud, String loc, String telefon){// constructor necesar pentru clasele Client si Utilizator
         this.nume = nume;
         this.prenume = prenume;
         this.buletin = new ActIdentitate(cnp, serie, numar, jud, loc);
+        this.telefon = telefon;
+
     }
     public Persoana(String email, String parola){// constructor necesar pentru clasa Utilizator
         this.email = email;
@@ -59,4 +62,8 @@ public class Persoana {
     public void setCarteIdentitate(ActIdentitate buletin) {
         this.buletin = buletin;
     }
+    public String getTelefon(){
+        return this.telefon;
+    }
+
 }

@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from ui_log_in import Ui_Authentification
 from ui_sign_up import Ui_Register
 from ui_complete_profile import Ui_CompleteProfile
+from ui_profile_selection import Ui_ProfileSelection
 
 class RegisterApp(QtWidgets.QDialog):
     def __init__(self, gateway, manager):
@@ -38,7 +39,7 @@ class RegisterApp(QtWidgets.QDialog):
                 QtWidgets.QMessageBox.information(self, "Success", "Account created successfully!")
                 self.complete_win = CompleteProfileApp(self.gateway, self.manager, email)
                 if self.complete_win.exec_() == QtWidgets.QDialog.Accepted:
-                    self.accept()  # Închide Register cu succes pentru a intra în Explore
+                    self.accept()
             else:
                 QtWidgets.QMessageBox.critical(self, "Error", "Registration failed!")
 
@@ -82,52 +83,135 @@ class LoginApp(QtWidgets.QDialog):
         self.close()
 
 
+class ProfileSelectionApp(QtWidgets.QDialog):
+    def __init__(self, gateway, manager, email):
+        super(ProfileSelectionApp, self).__init__()
+        self.ui = Ui_ProfileSelection()
+        self.ui.setupUi(self)
+        self.gateway = gateway
+        self.manager = manager
+        self.current_user_email = email
+
+        self.ui.btn_add.clicked.connect(self.handle_add_profile)
+        self.ui.btn_view.clicked.connect(self.handle_view_details)
+        self.ui.btn_select.clicked.connect(self.handle_select)
+
+        self.load_profiles()
+
+    def handle_select(self):
+        selected_row = self.ui.table.currentRow()
+        if selected_row == -1:
+            QtWidgets.QMessageBox.warning(self, "Selection", "Te rugăm să selectezi un profil!")
+            return
+
+        manager = self.gateway.getManagerClienti(self.current_user_email)
+        lista = manager.getLista()
+
+        self.selected_client = lista.get(selected_row)
+
+        self.accept()
+
+    def load_profiles(self):
+        """Populează tabelul folosind ManagerClienti.getLista()[cite: 14, 15]"""
+        manager = self.gateway.getManagerClienti(self.current_user_email)
+        lista_beneficiari = manager.getLista()
+
+        self.ui.table.setRowCount(0)
+        for i in range(lista_beneficiari.size()):
+            client = lista_beneficiari.get(i)
+            persoana = client.getPersoana()
+
+            self.ui.table.insertRow(i)
+            self.ui.table.setItem(i, 0, QtWidgets.QTableWidgetItem(persoana.getNume()))
+            self.ui.table.setItem(i, 1, QtWidgets.QTableWidgetItem(persoana.getPrenume()))
+            self.ui.table.setItem(i, 2, QtWidgets.QTableWidgetItem(persoana.getCNP()))
+
+    def handle_add_profile(self):
+        manager = self.gateway.getManagerClienti(self.current_user_email)
+        if manager.getLista().size() >= 10:
+            QtWidgets.QMessageBox.warning(self, "Limit Reached", "You can only have up to 10 profiles.")
+            return
+
+        from auth_01 import CompleteProfileApp
+        add_win = CompleteProfileApp(self.gateway, manager, self.current_user_email)
+        if add_win.exec_() == QtWidgets.QDialog.Accepted:
+            self.load_profiles()
+
+    def handle_view_details(self):
+        selected_row = self.ui.table.currentRow()
+        if selected_row == -1:
+            QtWidgets.QMessageBox.warning(self, "Selection", "Te rugăm să selectezi un beneficiar mai întâi!")
+            return
+
+        from explore_02 import ProfileApp
+
+        self.details_win = ProfileApp(
+            self.gateway,
+            self.manager,
+            self.current_user_email,
+            index=selected_row
+        )
+
+        self.details_win.exec_()
+        self.load_profiles()
+
 class CompleteProfileApp(QtWidgets.QDialog):
-    def __init__(self, gateway, manager,email):
+    def __init__(self, gateway, manager,email, profile_index=None):
         super(CompleteProfileApp, self).__init__()
         self.ui = Ui_CompleteProfile()
         self.ui.setupUi(self)
         self.gateway = gateway
         self.manager = manager
         self.current_user_email = email
-        # Ambele butoane închid dialogul cu "Accepted" pentru a merge la Explore[cite: 1, 3]
+        self.profile_index = profile_index
         self.ui.btn_complete.clicked.connect(self.handle_completion)
         self.ui.btn_skip.clicked.connect(self.accept)
 
     def handle_completion(self):
         try:
-            # 1. Colectăm datele din UI
-            nume = self.ui.inputs["Last Name"].text()
-            prenume = self.ui.inputs["First Name"].text()
-            cnp = self.ui.inputs["CNP"].text()
-            tel = self.ui.inputs["Phone Number"].text()
-            judet = self.ui.inputs["County"].text()
-            oras = self.ui.inputs["City"].text()
+            data = {k: v.text().strip() for k, v in self.ui.inputs.items()}
 
-            # 2. Creăm obiectul Client în Java (folosind constructorul cu 8 parametri)
-            new_client = self.gateway.jvm.Client(nume, prenume, cnp, "N/A", "N/A", judet, oras, tel)
+            if not all(data.values()):
+                QtWidgets.QMessageBox.warning(self, "Eroare", "Toate câmpurile sunt obligatorii!")
+                return
 
-            # 3. Salvăm folosind ManagerClienti
+            if len(data["CNP"]) != 13 or not data["CNP"].isdigit():
+                QtWidgets.QMessageBox.warning(self, "Eroare", "CNP-ul trebuie să conțină exact 13 cifre!")
+                return
+
+            client_java = self.gateway.jvm.Client(
+                data["Last Name"],
+                data["First Name"],
+                data["CNP"],
+                "N/A",
+                "N/A",
+                data["County"],
+                data["City"],
+                data["Phone Number"]
+            )
+
+            varsta = client_java.getVarsta()
+            if varsta < 0:
+                QtWidgets.QMessageBox.critical(self, "Eroare", "Sistemul Java a raportat un CNP invalid!")
+                return
+
             manager_clienti = self.gateway.getManagerClienti(self.current_user_email)
-            manager_clienti.adaugaClient(new_client)
-
-            # --- SOLUȚIA: ---
-            # Nu mai apelăm self.open_explore()!
-            # Apelăm doar self.accept() pentru a închide fereastra de editare.
+            if self.profile_index is not None:
+                manager_clienti.actualizeazaClient(self.profile_index, client_java)
+            else:
+                manager_clienti.adaugaClient(client_java)
             self.accept()
 
+        except KeyError as e:
+            QtWidgets.QMessageBox.critical(self, "Eroare UI", f"Lipsește câmpul de intrare: {str(e)}")
         except Exception as e:
-            print(f"Failed to save profile: {e}")
+            QtWidgets.QMessageBox.critical(self, "Crash", f"Eroare de compatibilitate: {str(e)}")
 
     def handle_skip(self):
         self.open_explore()
 
     def open_explore(self):
         from explore_02 import ExploreApp
-
-        # Creăm și afișăm fereastra Explore[cite: 2]
-        self.dashboard = ExploreApp(self.gateway, self.manager)
+        self.dashboard = ExploreApp(self.gateway, self.manager, self.current_user_email)
         self.dashboard.show()
-
-        # Închidem dialogul actual, dar Explore va rămâne deschis
         self.accept()

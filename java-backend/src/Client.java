@@ -7,16 +7,13 @@ import java.time.*;
 public class Client {
     private int varsta;
     private Persoana p;
-    private String telefon;
 
     public Client(String nume, String prenume, String cnp, String telefon){
-        p = new Persoana(nume, prenume, cnp);
-        this.telefon = telefon;
+        p = new Persoana(nume, prenume, cnp, telefon);
         this.varsta = calculeazaVarsta(cnp);
     }
     public Client(String nume, String prenume, String cnp, String serie, String numar, String judet, String localitate, String telefon) {
-        this.p = new Persoana(nume, prenume, cnp, serie, numar, judet, localitate);
-        this.telefon = telefon;
+        this.p = new Persoana(nume, prenume, cnp, serie, numar, judet, localitate, telefon);
         this.varsta = calculeazaVarsta(cnp);
     }
     public Persoana getPersoana(){
@@ -53,13 +50,8 @@ public class Client {
     }
 
     public String getTelefon() {
-        return telefon;
+        return p.getTelefon(); // Delegăm responsabilitatea către Persoana
     }
-
-    public void setTelefon(String telefon) {
-        this.telefon = telefon;
-    }
-
     @Override
     public String toString() {
         return p.getNume() + " " + p.getPrenume() + ", CNP: " + p.getCNP() + ", varsta: " + varsta;// + ", risc: " + dizabilitate;

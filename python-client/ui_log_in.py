@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_Authentification(object):
     def setupUi(self, Dialog):
@@ -24,7 +22,6 @@ class Ui_Authentification(object):
         self.verticalLayout.setSpacing(30)
         self.verticalLayout.setObjectName("verticalLayout")
 
-        # --- HEADER SECTION ---
         self.header_layout = QtWidgets.QVBoxLayout()
         self.header_layout.setSpacing(15)
         self.header_layout.setObjectName("header_layout")
@@ -41,7 +38,7 @@ class Ui_Authentification(object):
 
         self.label_welcome = QtWidgets.QLabel(self.frame)
         self.label_welcome.setStyleSheet("color: #0f172a;\n"
-                                         "    font-size: 55px;\n"  # MULT MAI MARE
+                                         "    font-size: 55px;\n" 
                                          "    font-weight: bold;\n"
                                          "    background: transparent;\n"
                                          "    border: none")
@@ -50,7 +47,7 @@ class Ui_Authentification(object):
 
         self.label_details = QtWidgets.QLabel(self.frame)
         self.label_details.setStyleSheet("color: #64748b;\n"
-                                         "    font-size: 28px;\n"  # MULT MAI MARE
+                                         "    font-size: 28px;\n" 
                                          "    font-weight: 400;\n"
                                          "    background: transparent;\n"
                                          "    border: none")
@@ -59,15 +56,13 @@ class Ui_Authentification(object):
 
         self.verticalLayout.addLayout(self.header_layout)
 
-        # --- INPUT SECTION ---
         self.input_Layout = QtWidgets.QVBoxLayout()
         self.input_Layout.setSpacing(20)
         self.input_Layout.setObjectName("input_Layout")
 
-        # Email
         self.label_email = QtWidgets.QLabel(self.frame)
         self.label_email.setStyleSheet("color: #4b5563;\n"
-                                       "    font-size: 26px;\n"  # MULT MAI MARE
+                                       "    font-size: 26px;\n" 
                                        "    font-weight: 600;\n"
                                        "    background: transparent;\n"
                                        "    border: none")
@@ -81,11 +76,10 @@ class Ui_Authentification(object):
                                           "    border-radius: 12px;\n"
                                           "    padding: 15px;\n"
                                           "    color: #1f2937;\n"
-                                          "    font-size: 28px;")  # Textul introdus e imens
+                                          "    font-size: 28px;")
         self.lineEdit_email.setObjectName("lineEdit_email")
         self.input_Layout.addWidget(self.lineEdit_email)
 
-        # Parola
         self.label_passwd = QtWidgets.QLabel(self.frame)
         self.label_passwd.setStyleSheet("color: #4b5563;\n"
                                         "    font-size: 26px;\n"
@@ -107,16 +101,15 @@ class Ui_Authentification(object):
         self.lineEdit_passwd.setObjectName("lineEdit_passwd")
         self.input_Layout.addWidget(self.lineEdit_passwd)
 
-        # Checkbox
         self.checkBox = QtWidgets.QCheckBox(self.frame)
         self.checkBox.setStyleSheet("QCheckBox {\n"
                                     "    color: #4b5563;\n"
-                                    "    font-size: 24px;\n"  # MULT MAI MARE
+                                    "    font-size: 24px;\n"  
                                     "    spacing: 15px;\n"
                                     "    border: none;\n"
                                     "}\n"
                                     "QCheckBox::indicator {\n"
-                                    "    width: 20px;\n"  # Pătrățelul bifabil este acum mare
+                                    "    width: 20px;\n"  
                                     "    height: 20px;\n"
                                     "}")
         self.checkBox.setObjectName("checkBox")
@@ -124,7 +117,6 @@ class Ui_Authentification(object):
 
         self.verticalLayout.addLayout(self.input_Layout)
 
-        # --- FOOTER SECTION ---
         self.footer_layout = QtWidgets.QVBoxLayout()
         self.footer_layout.setContentsMargins(-1, 40, -1, -1)
         self.footer_layout.setSpacing(25)

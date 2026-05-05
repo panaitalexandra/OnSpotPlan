@@ -1,4 +1,6 @@
 import random
+from operator import index
+
 from PyQt5 import QtWidgets, QtCore
 from ui_explore import Ui_Explore
 from ui_filter import Ui_Filter
@@ -16,11 +18,41 @@ class ExploreApp(QtWidgets.QDialog):
         self.actualizeaza_locatii("Constanta")
         self.ui.btn_filters.clicked.connect(self.selecteaza_oras)
         self.ui.btn_profile.clicked.connect(self.deschide_profil)
+        self.seteaza_profil_implicit()
+
+    def seteaza_profil_implicit(self):
+        try:
+            manager_clienti = self.gateway.getManagerClienti(self.current_user_email)
+            lista_clienti = manager_clienti.getLista()
+
+            if not lista_clienti.isEmpty():
+                client_implicit = lista_clienti.get(0)
+                persoana = client_implicit.getPersoana()
+
+                nume_complet = f"{persoana.getNume()} {persoana.getPrenume()}"
+                self.ui.lbl_active_user.setText(f"👤 Active: {nume_complet}")
+                self.ui.lbl_active_user.setStyleSheet("color: #38bdf8; font-weight: bold; font-size: 14px;")
+            else:
+                self.ui.lbl_active_user.setText("👤 No profile selected")
+
+        except Exception as e:
+            print(f"Eroare la setarea profilului implicit: {e}")
 
     def deschide_profil(self):
-        # Deschidem fereastra de profil ca dialog modal[cite: 2]
-        self.profile_win = ProfileApp(self.gateway, self.manager, self.current_user_email)
-        self.profile_win.exec_()
+        try:
+            from auth_01 import ProfileSelectionApp
+            self.selection_win = ProfileSelectionApp(self.gateway, self.manager, self.current_user_email)
+
+            if self.selection_win.exec_() == QtWidgets.QDialog.Accepted:
+                if hasattr(self.selection_win, 'selected_client'):
+                    client = self.selection_win.selected_client
+                    persoana = client.getPersoana()
+
+                    nume_activ = f"{persoana.getNume()} {persoana.getPrenume()}"
+                    self.ui.lbl_active_user.setText(f"Current Profile: {nume_activ}")
+                    self.ui.lbl_active_user.setStyleSheet("color: #38bdf8; font-weight: bold; font-size: 16px;")
+        except Exception as e:
+            print(f"Eroare la actualizare label: {e}")
 
     def selecteaza_oras(self):
         dialog = Ui_Filter(self)
@@ -32,7 +64,7 @@ class ExploreApp(QtWidgets.QDialog):
 
     def actualizeaza_locatii(self, judet_selectat):
         try:
-            while self.ui.main_layout.count() > 5:  # Păstrăm header-ul și filtrele
+            while self.ui.main_layout.count() > 5:
                 item = self.ui.main_layout.takeAt(5)
                 if item.widget():
                     item.widget().deleteLater()
@@ -90,14 +122,14 @@ class ExploreApp(QtWidgets.QDialog):
 
 
 class ProfileApp(QtWidgets.QDialog):
-    def __init__(self, gateway, manager, email):
+    def __init__(self, gateway, manager, email, index=0):
         super(ProfileApp, self).__init__()
         self.ui = Ui_OpenProfile()
         self.ui.setupUi(self)
         self.gateway = gateway
         self.manager = manager
         self.current_user_email = email
-        # Încărcăm datele utilizatorului curent din Java[cite: 1, 8]
+        self.profile_index = index
         self.incarca_date_profil()
 
         self.ui.btn_modify.clicked.connect(self.deschide_modificare)
@@ -105,26 +137,46 @@ class ProfileApp(QtWidgets.QDialog):
 
     def incarca_date_profil(self):
         try:
-            # Cerem managerul pentru user-ul logat
             manager = self.gateway.getManagerClienti(self.current_user_email)
-            lista = manager.getLista()  # Returnează ArrayList<Client>[cite: 10]
+            lista = manager.getLista()
 
-            if not lista.isEmpty():
-                profil = lista.get(0)  # Luăm primul set de date salvat[cite: 10]
-                self.ui.info_labels["Full Name"].setText(profil.getPersoana().getNume())
-                self.ui.info_labels["Phone Number"].setText(profil.getTelefon())
-                # ... restul câmpurilor
+            if not lista.isEmpty() and self.profile_index < lista.size():
+                profil = lista.get(self.profile_index)
+                p = profil.getPersoana()
+
+                self.ui.info_labels["Full Name"].setText(f"{p.getNume()} {p.getPrenume()}")
+
+                if "CNP" in self.ui.info_labels:
+                    self.ui.info_labels["CNP"].setText(p.getCNP())
+
+                self.ui.info_labels["Phone Number"].setText(p.getTelefon())
+
+                self.ui.info_labels["Region"].setText(p.getJudet())
+
+                if "City" in self.ui.info_labels:
+                    self.ui.info_labels["City"].setText(p.getLocalitate())
+
         except Exception as e:
-            print(f"Eroare la încărcare: {e}")
+            print(f"Eroare la popularea datelor în ProfileApp: {e}")
 
     def deschide_modificare(self):
-        # Importăm aici pentru a evita erorile de import circular[cite: 2]
         from auth_01 import CompleteProfileApp
 
-        # Deschidem fereastra de editare
-        self.edit_win = CompleteProfileApp(self.gateway, self.manager, self.current_user_email)
+        self.edit_win = CompleteProfileApp(
+            self.gateway,
+            self.manager,
+            self.current_user_email,
+            profile_index=self.profile_index
+        )
 
-        # Dacă utilizatorul a apăsat "Complete" în fereastra de editare
         if self.edit_win.exec_() == QtWidgets.QDialog.Accepted:
-            # Reîmprospătăm datele afișate pe ecranul curent[cite: 1, 2]
             self.incarca_date_profil()
+
+    def handle_select(self):
+        selected_row = self.ui.table.currentRow()
+
+        if selected_row == -1:
+            QtWidgets.QMessageBox.warning(self, "Selection", "Te rugăm să selectezi un profil din tabel!")
+            return
+
+        self.accept()

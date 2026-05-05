@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_Register(object): # Am redenumit clasa pentru a o distinge de Login
+class Ui_Register(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(1000, 1250)
@@ -58,12 +57,10 @@ class Ui_Register(object): # Am redenumit clasa pentru a o distinge de Login
 
         self.verticalLayout.addLayout(self.header_layout)
 
-        # --- INPUT SECTION ---
         self.input_Layout = QtWidgets.QVBoxLayout()
         self.input_Layout.setSpacing(20)
         self.input_Layout.setObjectName("input_Layout")
 
-        # Email
         self.label_email = QtWidgets.QLabel(self.frame)
         self.label_email.setStyleSheet("color: #4b5563; font-size: 26px; font-weight: 600; background: transparent; border: none")
         self.label_email.setObjectName("label_email")
@@ -75,7 +72,6 @@ class Ui_Register(object): # Am redenumit clasa pentru a o distinge de Login
         self.lineEdit_email.setObjectName("lineEdit_email")
         self.input_Layout.addWidget(self.lineEdit_email)
 
-        # Parola
         self.label_passwd = QtWidgets.QLabel(self.frame)
         self.label_passwd.setStyleSheet("color: #4b5563; font-size: 26px; font-weight: 600; background: transparent; border: none")
         self.label_passwd.setObjectName("label_passwd")
@@ -88,7 +84,6 @@ class Ui_Register(object): # Am redenumit clasa pentru a o distinge de Login
         self.lineEdit_passwd.setObjectName("lineEdit_passwd")
         self.input_Layout.addWidget(self.lineEdit_passwd)
 
-        # --- NOU: Confirmare Parola ---
         self.label_confirm_passwd = QtWidgets.QLabel(self.frame)
         self.label_confirm_passwd.setStyleSheet("color: #4b5563; font-size: 26px; font-weight: 600; background: transparent; border: none")
         self.label_confirm_passwd.setObjectName("label_confirm_passwd")
@@ -103,13 +98,12 @@ class Ui_Register(object): # Am redenumit clasa pentru a o distinge de Login
 
         self.verticalLayout.addLayout(self.input_Layout)
 
-        # --- FOOTER SECTION ---
         self.footer_layout = QtWidgets.QVBoxLayout()
         self.footer_layout.setContentsMargins(-1, 40, -1, -1)
         self.footer_layout.setSpacing(25)
         self.footer_layout.setObjectName("footer_layout")
 
-        self.pushButton_register = QtWidgets.QPushButton(self.frame) # Redenumit
+        self.pushButton_register = QtWidgets.QPushButton(self.frame)
         self.pushButton_register.setMinimumHeight(90)
         self.pushButton_register.setStyleSheet("QPushButton {\n"
                                             "    background-color: #1e1b4b;\n"
@@ -125,7 +119,7 @@ class Ui_Register(object): # Am redenumit clasa pentru a o distinge de Login
         self.pushButton_register.setObjectName("pushButton_register")
         self.footer_layout.addWidget(self.pushButton_register)
 
-        self.label_back_to_login = QtWidgets.QLabel(self.frame) # Redenumit
+        self.label_back_to_login = QtWidgets.QLabel(self.frame)
         self.label_back_to_login.setStyleSheet("color: #4b5563; font-size: 24px; background: transparent; border: none;")
         self.label_back_to_login.setAlignment(QtCore.Qt.AlignCenter)
         self.label_back_to_login.setObjectName("label_back_to_login")

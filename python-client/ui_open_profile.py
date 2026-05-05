@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_OpenProfile(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -15,31 +14,30 @@ class Ui_OpenProfile(object):
         self.frame.setStyleSheet("background-color: white; border-radius: 30px;")
         self.layout = QtWidgets.QVBoxLayout(self.frame)
         self.layout.setContentsMargins(50, 50, 50, 50)
-        self.layout.setSpacing(30)
+        self.layout.setSpacing(20)
 
         # Header
         self.label_title = QtWidgets.QLabel("My Profile")
         self.label_title.setStyleSheet("font-size: 55px; font-weight: bold; color: #1e1b4b; margin-bottom: 10px;")
         self.layout.addWidget(self.label_title)
 
-        # Secțiune Afișare Date[cite: 6, 7]
         self.info_labels = {}
-        fields = ["Full Name", "Phone Number", "Address", "City"]
+        fields = ["Full Name", "CNP", "Phone Number", "Region", "City"]
 
         for field in fields:
             lbl_title = QtWidgets.QLabel(field)
-            lbl_title.setStyleSheet("font-size: 20px; font-weight: bold; color: #94a3b8; margin-top: 10px;")
+            lbl_title.setStyleSheet("font-size: 18px; font-weight: bold; color: #94a3b8; margin-top: 5px;")
             self.layout.addWidget(lbl_title)
 
             lbl_value = QtWidgets.QLabel("Not provided")
             lbl_value.setStyleSheet(
-                "font-size: 26px; color: #1e1b4b; padding: 10px 0px; border-bottom: 1px solid #f1f5f9;")
+                "font-size: 24px; color: #1e1b4b; padding: 5px 0px; border-bottom: 1px solid #f1f5f9;")
             self.layout.addWidget(lbl_value)
+
             self.info_labels[field] = lbl_value
 
-        self.layout.addStretch()  # Împinge butoanele în jos[cite: 4]
+        self.layout.addStretch()
 
-        # --- Zona de butoane (Un singur set de butoane pentru tot) ---
         self.btn_modify = QtWidgets.QPushButton("Modify Profile Details")
         self.btn_modify.setMinimumHeight(85)
         self.btn_modify.setStyleSheet("""

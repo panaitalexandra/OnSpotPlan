@@ -35,7 +35,7 @@ class Ui_Explore(object):
         self.label_logo = QtWidgets.QLabel("EventHub")
         self.label_logo.setStyleSheet("font-size: 55px; font-weight: bold; color: #1e1b4b; font-family: 'Segoe UI';")
 
-        self.btn_profile = QtWidgets.QPushButton("My profile")
+        self.btn_profile = QtWidgets.QPushButton("Profiles")
         self.btn_profile.setMinimumHeight(60)
         self.btn_profile.setMinimumWidth(180)
         self.btn_profile.setStyleSheet("""
@@ -58,8 +58,16 @@ class Ui_Explore(object):
         self.header_layout.addWidget(self.btn_profile)
 
         self.main_layout.addLayout(self.header_layout)
-
-        # --- SEARCH BAR ---
+        self.lbl_active_user = QtWidgets.QLabel("Current Profile: None")
+        self.lbl_active_user.setObjectName("lbl_active_user")
+        self.lbl_active_user.setStyleSheet("""
+                    color: #38bdf8; 
+                    font-size: 30px; 
+                    font-weight: bold; 
+                    margin-top: 10px;
+                    margin-left: 5px;
+                """)
+        self.main_layout.addWidget(self.lbl_active_user)
         self.lineEdit_search = QtWidgets.QLineEdit()
         self.lineEdit_search.setPlaceholderText("Search events, organizers, or cities...")
         self.lineEdit_search.setMinimumHeight(100)
@@ -67,14 +75,12 @@ class Ui_Explore(object):
             "background-color: #ffffff; border: 2px solid #d1d5db; border-radius: 25px; padding-left: 30px; font-size: 32px; color: #4b5563;")
         self.main_layout.addWidget(self.lineEdit_search)
 
-        # --- FILTERS BUTTON ---
         self.btn_filters = QtWidgets.QPushButton("  ≡  Filters")
         self.btn_filters.setMinimumHeight(90)
         self.btn_filters.setStyleSheet(
             "background-color: #1e1b4b; color: white; font-size: 32px; font-weight: bold; border-radius: 25px;")
         self.main_layout.addWidget(self.btn_filters)
 
-        # --- CATEGORIES ---
         self.cat_layout = QtWidgets.QHBoxLayout()
         self.cat_layout.setSpacing(20)
         categories = ["All Events", "Music", "Tech", "Food"]
@@ -86,7 +92,6 @@ class Ui_Explore(object):
             self.cat_layout.addWidget(btn)
         self.main_layout.addLayout(self.cat_layout)
 
-        # --- RECOMMENDATION HEADER ---
         self.rec_header = QtWidgets.QHBoxLayout()
         self.label_rec = QtWidgets.QLabel("Recommended for You")
         self.label_rec.setStyleSheet("font-size: 38px; font-weight: bold; color: #1f2937;")
@@ -94,13 +99,8 @@ class Ui_Explore(object):
         self.rec_header.addStretch()
         self.main_layout.addLayout(self.rec_header)
 
-        # --- STEP 3: Asamblarea finală ---
-        # Fixăm main_container în interiorul scroll_area
         self.scroll_area.setWidget(self.main_container)
-
-        # Adăugăm scroll_area în layout-ul ferestrei[cite: 4]
         self.verticalLayout_main.addWidget(self.scroll_area)
-
         self.retranslateUi(ExploreEvents)
         QtCore.QMetaObject.connectSlotsByName(ExploreEvents)
 

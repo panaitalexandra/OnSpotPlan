@@ -17,8 +17,8 @@ public class Utilizator {
         this.profilComplet = false;
     }
     
-    public Utilizator(String nume, String prenume, String cnp, String serie, String numar, String judet, String localitate, String email, String parola) throws Exception {// constructor necesar pentru ManagerUtilizatori
-        p = new Persoana(nume, prenume, cnp, serie, numar, judet, localitate);
+    public Utilizator(String nume, String prenume, String cnp, String serie, String numar, String judet, String localitate, String telefon, String email, String parola) throws Exception {// constructor necesar pentru ManagerUtilizatori
+        p = new Persoana(nume, prenume, cnp, serie, numar, judet, localitate, telefon);
         this.beneficiari = new ArrayList<>();
         this.profilComplet = false;
 
@@ -48,6 +48,7 @@ public class Utilizator {
                 p.getNumar(),
                 p.getJudet(),
                 p.getLocalitate(),
+                p.getTelefon(),
                 p.getEmail(),
                 p.getParola()
             );
