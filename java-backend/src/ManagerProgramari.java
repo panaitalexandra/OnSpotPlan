@@ -50,7 +50,7 @@ public class ManagerProgramari {
     }
 
     private void citesteDinFisier() {
-        File f = new File("programari.txt");
+        File f = new File("events_booked.txt");
         if (!f.exists()) return;
 
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
@@ -79,7 +79,7 @@ public class ManagerProgramari {
     }
 
     private void scrieInFisier() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("programari.txt"))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("events_booked.txt"))) {
             for (Programare p : programari) {
                 bw.write(p.toFileString());
                 bw.newLine();
