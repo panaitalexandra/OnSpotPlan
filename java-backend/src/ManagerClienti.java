@@ -23,9 +23,7 @@ public class ManagerClienti {
             String linie;
             while ((linie = br.readLine()) != null) {
                 String[] parts = linie.split("_");
-                // Verificăm structura: Nume, Prenume, CNP, Judet, Localitate, Telefon (6 câmpuri)
                 if (parts.length == 6) {
-                    // Folosim Constructorul 2 al clasei Client, punem "N/A" pentru Serie/Numar
                     clienti.add(new Client(parts[0], parts[1], parts[2], "N/A", "N/A", parts[3], parts[4], parts[5]));
                 }
             }
@@ -46,8 +44,8 @@ public class ManagerClienti {
                         p.getNume(),
                         p.getPrenume(),
                         p.getCNP(),
-                        p.getCarteIdentitate().getJudet(),
-                p.getCarteIdentitate().getLocalitate(),
+                        p.getCarteIdentitate().getRegion(),
+                p.getCarteIdentitate().getCity(),
                 c.getTelefon()
                 ));
             }
@@ -64,10 +62,9 @@ public class ManagerClienti {
         }
         return instante.get(userId);
     }
-    // În ManagerClienti.java
     public boolean actualizeazaClient(int index, Client c) {
         if (index >= 0 && index < clienti.size()) {
-            clienti.set(index, c); // Înlocuiește vechiul obiect cu cel nou
+            clienti.set(index, c);
             salveaza();
             return true;
         }

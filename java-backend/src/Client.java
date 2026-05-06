@@ -50,7 +50,7 @@ public class Client {
     }
 
     public String getTelefon() {
-        return p.getTelefon(); // Delegăm responsabilitatea către Persoana
+        return p.getTelefon();
     }
     @Override
     public String toString() {

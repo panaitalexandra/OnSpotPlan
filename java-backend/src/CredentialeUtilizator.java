@@ -13,7 +13,7 @@ public class CredentialeUtilizator {
     public String getUser(){
         return user;
     }
-    public static CredentialeUtilizator getInstance(){// pentru toate ferestrele - cunoasterea utilizatorului
+    public static CredentialeUtilizator getInstance(){
         if(instanta == null)
             instanta = new CredentialeUtilizator();
         return instanta;

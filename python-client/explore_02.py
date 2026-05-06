@@ -5,6 +5,7 @@ from PyQt5 import QtWidgets, QtCore
 from ui_explore import Ui_Explore
 from ui_filter import Ui_Filter
 from ui_open_profile import Ui_OpenProfile
+from ui_booking import Ui_BookingApp
 
 class ExploreApp(QtWidgets.QDialog):
     def __init__(self, gateway, manager, email):
@@ -14,6 +15,7 @@ class ExploreApp(QtWidgets.QDialog):
         self.gateway = gateway
         self.manager = manager
         self.current_user_email = email
+        self.active_client = None
         self.locatie_service = self.gateway.entry_point.getLocatieService()
         self.actualizeaza_locatii("Constanta")
         self.ui.btn_filters.clicked.connect(self.selecteaza_oras)
@@ -26,14 +28,13 @@ class ExploreApp(QtWidgets.QDialog):
             lista_clienti = manager_clienti.getLista()
 
             if not lista_clienti.isEmpty():
-                client_implicit = lista_clienti.get(0)
-                persoana = client_implicit.getPersoana()
+                self.active_client = lista_clienti.get(0)  # <--- ACEASTA ESTE LINIA CRITICĂ
+                persoana = self.active_client.getPersoana()  # [cite: 6]
 
                 nume_complet = f"{persoana.getNume()} {persoana.getPrenume()}"
-                self.ui.lbl_active_user.setText(f"👤 Active: {nume_complet}")
-                self.ui.lbl_active_user.setStyleSheet("color: #38bdf8; font-weight: bold; font-size: 14px;")
+                self.ui.lbl_active_user.setText(f"Current Profile: {nume_complet}")
             else:
-                self.ui.lbl_active_user.setText("👤 No profile selected")
+                self.ui.lbl_active_user.setText("No profile selected")
 
         except Exception as e:
             print(f"Eroare la setarea profilului implicit: {e}")
@@ -45,14 +46,25 @@ class ExploreApp(QtWidgets.QDialog):
 
             if self.selection_win.exec_() == QtWidgets.QDialog.Accepted:
                 if hasattr(self.selection_win, 'selected_client'):
-                    client = self.selection_win.selected_client
-                    persoana = client.getPersoana()
+                    self.active_client = self.selection_win.selected_client  # <--- ACEASTA ESTE LINIA CRITICĂ
+                    persoana = self.active_client.getPersoana()  # [cite: 6]
 
                     nume_activ = f"{persoana.getNume()} {persoana.getPrenume()}"
                     self.ui.lbl_active_user.setText(f"Current Profile: {nume_activ}")
                     self.ui.lbl_active_user.setStyleSheet("color: #38bdf8; font-weight: bold; font-size: 16px;")
         except Exception as e:
             print(f"Eroare la actualizare label: {e}")
+
+    def deschide_rezervare(self, nume_locatie):
+        """Lanseaază fereastra de calendar pentru locația selectată."""
+        if self.active_client is None:
+            QtWidgets.QMessageBox.warning(self, "Selection Required",
+                                          "Please select or add a profile first!")
+            return
+
+        # Deschidem UI-ul de Booking creat anterior[cite: 6, 8]
+        self.booking_win = Ui_BookingApp(self.gateway, nume_locatie, self.active_client)
+        self.booking_win.exec_()
 
     def selecteaza_oras(self):
         dialog = Ui_Filter(self)
@@ -64,8 +76,8 @@ class ExploreApp(QtWidgets.QDialog):
 
     def actualizeaza_locatii(self, judet_selectat):
         try:
-            while self.ui.main_layout.count() > 5:
-                item = self.ui.main_layout.takeAt(5)
+            while self.ui.main_layout.count() > 6:
+                item = self.ui.main_layout.takeAt(6)
                 if item.widget():
                     item.widget().deleteLater()
 
@@ -118,8 +130,12 @@ class ExploreApp(QtWidgets.QDialog):
         return card_frame
 
     def deschide_rezervare(self, nume_locatie):
-        QtWidgets.QMessageBox.information(self, "Rezervare", f"Ai ales să rezervi la: {nume_locatie}")
+        if self.active_client is None:
+            QtWidgets.QMessageBox.warning(self, "Atentie", "Selectati un profil inainte de rezervare!")
+            return
 
+        self.booking_win = Ui_BookingApp(self.gateway, nume_locatie, self.active_client)
+        self.booking_win.exec_()
 
 class ProfileApp(QtWidgets.QDialog):
     def __init__(self, gateway, manager, email, index=0):

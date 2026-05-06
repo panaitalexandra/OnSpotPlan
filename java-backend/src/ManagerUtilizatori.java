@@ -28,7 +28,7 @@ public class ManagerUtilizatori {
                                     user = new Utilizator(arr[0], arr[1], arr[2], arr[3], 
                                     arr[4], arr[5], arr[6], arr[7], arr[8], arr[9]);
                                 else 
-                                    continue; // linie corupta
+                                    continue;
                             users.add(user);
                     }catch(Exception e){ e.printStackTrace(); }
                 }
@@ -46,19 +46,12 @@ public class ManagerUtilizatori {
         return ValidatorParola.esteValida(parola);
     }
     public Utilizator inregistreazaUtilizator(String email, String parola){
-        if (!ValidatorEmail.esteValid(email)) {
-            //JOptionPane.showMessageDialog(null, "Email invalid!");
+        if (!ValidatorEmail.esteValid(email))
             return null;
-        }
-        if (!ValidatorParola.esteValida(parola)) {
-//            JOptionPane.showMessageDialog(null, """
-//                                                Parola trebuie să conțină cel puțin 8 caractere dintre care:
-//                                                - o majusculă
-//                                                - o minusculă
-//                                                - o cifra
-//                                                - un caracter special: #, $, * """);
+
+        if (!ValidatorParola.esteValida(parola))
             return null;
-        }    
+
         var user = new Utilizator(email, parola);
         users.add(user);
         salveaza(user);

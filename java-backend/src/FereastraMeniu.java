@@ -90,12 +90,12 @@
 //                }
 //
 //                Client b = managerClienti.getLista().get(index);
-//                ActIdentitate act = b.getPersoana().getCarteIdentitate();
+//                IdentityCard act = b.getPersoana().getCarteIdentitate();
 //
 //                String serie = (act != null && act.getSerie() != null) ? act.getSerie() : "necunoscută";
-//                String numar = (act != null && act.getNumar() != null) ? act.getNumar() : "necunoscut";
+//                String numar = (act != null && act.getNumber() != null) ? act.getNumber() : "necunoscut";
 //                String judet = (act != null && act.getJudet() != null) ? act.getJudet() : "necunoscut";
-//                String localitate = (act != null && act.getLocalitate() != null) ? act.getLocalitate() : "necunoscut";
+//                String localitate = (act != null && act.getCity() != null) ? act.getCity() : "necunoscut";
 //
 //                JDialog FereastraDetalii = new JDialog(FereastraMeniu.this, "Detalii beneficiar", true);
 //                JPanel pInfo = new JPanel(new GridLayout(0, 1, 10, 10));

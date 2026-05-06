@@ -4,22 +4,22 @@
  */
 public class Persoana {
     private String nume, prenume, email, parola, telefon;
-    private ActIdentitate buletin;
+    private IdentityCard buletin;
     
     public Persoana(String nume, String prenume, String cnp, String telefon){// constructor necesar pentru clasa Client
         this.nume = nume;
         this.prenume = prenume;
-        this.buletin = new ActIdentitate(cnp);
+        this.buletin = new IdentityCard(cnp);
         this.telefon = telefon;
     }
     public Persoana(String nume, String prenume, String cnp, String serie, String numar, String jud, String loc, String telefon){// constructor necesar pentru clasele Client si Utilizator
         this.nume = nume;
         this.prenume = prenume;
-        this.buletin = new ActIdentitate(cnp, serie, numar, jud, loc);
+        this.buletin = new IdentityCard(cnp, serie, numar, jud, loc);
         this.telefon = telefon;
 
     }
-    public Persoana(String email, String parola){// constructor necesar pentru clasa Utilizator
+    public Persoana(String email, String parola){
         this.email = email;
         this.parola = parola;
     }
@@ -38,17 +38,17 @@ public class Persoana {
     public String getCNP(){
         return buletin.getCnp();
     }
-    public String getSerie(){
-        return buletin.getSerie();
+    public String getSeries(){
+        return buletin.getSeries();
     }
     public String getNumar(){
-        return buletin.getNumar();
+        return buletin.getNumber();
     }
-    public String getJudet(){
-        return buletin.getJudet();
+    public String getRegion(){
+        return buletin.getRegion();
     }
     public String getLocalitate(){
-        return buletin.getLocalitate();
+        return buletin.getCity();
     }
     public void setEmail(String email){
         this.email = email;
@@ -56,10 +56,10 @@ public class Persoana {
     public void setParola(String parola){
         this.parola = parola;
      }
-    public ActIdentitate getCarteIdentitate() {
+    public IdentityCard getCarteIdentitate() {
         return buletin;
     }
-    public void setCarteIdentitate(ActIdentitate buletin) {
+    public void setCarteIdentitate(IdentityCard buletin) {
         this.buletin = buletin;
     }
     public String getTelefon(){
