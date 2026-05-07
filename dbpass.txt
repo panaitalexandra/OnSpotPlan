@@ -1,0 +1,15 @@
+eventhubwelcomeapril
+
+
+to do
+- de fiecare data cand se deschidem o noua fereastra, este si cea din spate disponibila si se vede si e urat
+- nu vrem asta
+- in schimb putem adauga butonul de back and forward
+
+
+db
+- persoana = user = client
+- profiles
+- events
+- bookings
+- dates

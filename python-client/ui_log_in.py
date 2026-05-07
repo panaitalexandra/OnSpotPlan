@@ -70,7 +70,7 @@ class Ui_Authentification(object):
         self.input_Layout.addWidget(self.label_email)
 
         self.lineEdit_email = QtWidgets.QLineEdit(self.frame)
-        self.lineEdit_email.setMinimumHeight(80)  # Caseta de text mai înaltă
+        self.lineEdit_email.setMinimumHeight(80)
         self.lineEdit_email.setStyleSheet("background-color: #f3f4f6;\n"
                                           "    border: 2px solid #d1d5db;\n"
                                           "    border-radius: 12px;\n"
@@ -123,7 +123,7 @@ class Ui_Authentification(object):
         self.footer_layout.setObjectName("footer_layout")
 
         self.pushButton_login = QtWidgets.QPushButton(self.frame)
-        self.pushButton_login.setMinimumHeight(90)  # Buton masiv
+        self.pushButton_login.setMinimumHeight(90)
         self.pushButton_login.setStyleSheet("QPushButton {\n"
                                             "    background-color: #1e1b4b;\n"
                                             "    color: white;\n"

@@ -101,7 +101,7 @@ class ProfileSelectionApp(QtWidgets.QDialog):
     def handle_select(self):
         selected_row = self.ui.table.currentRow()
         if selected_row == -1:
-            QtWidgets.QMessageBox.warning(self, "Selection", "Te rugăm să selectezi un profil!")
+            QtWidgets.QMessageBox.warning(self, "Selection", "Choose a profile!")
             return
 
         manager = self.gateway.getManagerClienti(self.current_user_email)
@@ -112,7 +112,6 @@ class ProfileSelectionApp(QtWidgets.QDialog):
         self.accept()
 
     def load_profiles(self):
-        """Populează tabelul folosind ManagerClienti.getLista()[cite: 14, 15]"""
         manager = self.gateway.getManagerClienti(self.current_user_email)
         lista_beneficiari = manager.getLista()
 
@@ -140,7 +139,7 @@ class ProfileSelectionApp(QtWidgets.QDialog):
     def handle_view_details(self):
         selected_row = self.ui.table.currentRow()
         if selected_row == -1:
-            QtWidgets.QMessageBox.warning(self, "Selection", "Te rugăm să selectezi un beneficiar mai întâi!")
+            QtWidgets.QMessageBox.warning(self, "Selection", "Select a profile first!")
             return
 
         from explore_02 import ProfileApp
@@ -172,11 +171,11 @@ class CompleteProfileApp(QtWidgets.QDialog):
             data = {k: v.text().strip() for k, v in self.ui.inputs.items()}
 
             if not all(data.values()):
-                QtWidgets.QMessageBox.warning(self, "Eroare", "Toate câmpurile sunt obligatorii!")
+                QtWidgets.QMessageBox.warning(self, "Eroare", "All fields must be completed!")
                 return
 
             if len(data["CNP"]) != 13 or not data["CNP"].isdigit():
-                QtWidgets.QMessageBox.warning(self, "Eroare", "CNP-ul trebuie să conțină exact 13 cifre!")
+                QtWidgets.QMessageBox.warning(self, "Eroare", "Invalid cnp!")
                 return
 
             client_java = self.gateway.jvm.Client(
@@ -192,7 +191,7 @@ class CompleteProfileApp(QtWidgets.QDialog):
 
             varsta = client_java.getVarsta()
             if varsta < 0:
-                QtWidgets.QMessageBox.critical(self, "Eroare", "Sistemul Java a raportat un CNP invalid!")
+                QtWidgets.QMessageBox.critical(self, "Eroare", "CNP invalid!")
                 return
 
             manager_clienti = self.gateway.getManagerClienti(self.current_user_email)
@@ -203,9 +202,9 @@ class CompleteProfileApp(QtWidgets.QDialog):
             self.accept()
 
         except KeyError as e:
-            QtWidgets.QMessageBox.critical(self, "Eroare UI", f"Lipsește câmpul de intrare: {str(e)}")
+            QtWidgets.QMessageBox.critical(self, "Eroare UI", f"no input: {str(e)}")
         except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Crash", f"Eroare de compatibilitate: {str(e)}")
+            QtWidgets.QMessageBox.critical(self, "Crash", f"Err compatibilitye: {str(e)}")
 
     def handle_skip(self):
         self.open_explore()

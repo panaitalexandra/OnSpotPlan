@@ -8,19 +8,16 @@ class Ui_Explore(object):
         ExploreEvents.resize(1000, 1250)
         ExploreEvents.setStyleSheet("background-color: #121212;")
 
-        # Layout-ul principal al ferestrei
         self.verticalLayout_main = QtWidgets.QVBoxLayout(ExploreEvents)
-        self.verticalLayout_main.setContentsMargins(10, 10, 10, 10)  # Margini mici pentru scroll
+        self.verticalLayout_main.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_main.setObjectName("verticalLayout_main")
 
-        # --- STEP 1: Crearea Zonei de Scroll ---
         self.scroll_area = QtWidgets.QScrollArea(ExploreEvents)
-        self.scroll_area.setWidgetResizable(True)  # Conținutul se adaptează la lățime
+        self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setStyleSheet("border: none; background-color: transparent;")
         self.scroll_area.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scroll_area.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
-        # --- STEP 2: Main Container (va fi pus în scroll) ---
         self.main_container = QtWidgets.QFrame()
         self.main_container.setStyleSheet("background-color: white; border-radius: 40px;")
         self.main_layout = QtWidgets.QVBoxLayout(self.main_container)
@@ -28,8 +25,6 @@ class Ui_Explore(object):
         self.main_layout.setSpacing(35)
         self.main_layout.setObjectName("main_layout")
 
-        # (Codul pentru Header, Search Bar, Filtre și Categorii rămâne identic)[cite: 4]
-        # --- HEADER SECTION ---
         self.header_layout = QtWidgets.QHBoxLayout()
 
         self.label_logo = QtWidgets.QLabel("EventHub")

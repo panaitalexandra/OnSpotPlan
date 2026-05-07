@@ -28,8 +28,8 @@ class ExploreApp(QtWidgets.QDialog):
             lista_clienti = manager_clienti.getLista()
 
             if not lista_clienti.isEmpty():
-                self.active_client = lista_clienti.get(0)  # <--- ACEASTA ESTE LINIA CRITICĂ
-                persoana = self.active_client.getPersoana()  # [cite: 6]
+                self.active_client = lista_clienti.get(0)
+                persoana = self.active_client.getPersoana()
 
                 nume_complet = f"{persoana.getNume()} {persoana.getPrenume()}"
                 self.ui.lbl_active_user.setText(f"Current Profile: {nume_complet}")
@@ -37,7 +37,7 @@ class ExploreApp(QtWidgets.QDialog):
                 self.ui.lbl_active_user.setText("No profile selected")
 
         except Exception as e:
-            print(f"Eroare la setarea profilului implicit: {e}")
+            print(f"Err no profile selected: {e}")
 
     def deschide_profil(self):
         try:
@@ -46,23 +46,21 @@ class ExploreApp(QtWidgets.QDialog):
 
             if self.selection_win.exec_() == QtWidgets.QDialog.Accepted:
                 if hasattr(self.selection_win, 'selected_client'):
-                    self.active_client = self.selection_win.selected_client  # <--- ACEASTA ESTE LINIA CRITICĂ
-                    persoana = self.active_client.getPersoana()  # [cite: 6]
+                    self.active_client = self.selection_win.selected_client
+                    persoana = self.active_client.getPersoana()
 
                     nume_activ = f"{persoana.getNume()} {persoana.getPrenume()}"
                     self.ui.lbl_active_user.setText(f"Current Profile: {nume_activ}")
                     self.ui.lbl_active_user.setStyleSheet("color: #38bdf8; font-weight: bold; font-size: 16px;")
         except Exception as e:
-            print(f"Eroare la actualizare label: {e}")
+            print(f"Err: {e}")
 
     def deschide_rezervare(self, nume_locatie):
-        """Lanseaază fereastra de calendar pentru locația selectată."""
         if self.active_client is None:
             QtWidgets.QMessageBox.warning(self, "Selection Required",
                                           "Please select or add a profile first!")
             return
 
-        # Deschidem UI-ul de Booking creat anterior[cite: 6, 8]
         self.booking_win = Ui_BookingApp(self.gateway, nume_locatie, self.active_client)
         self.booking_win.exec_()
 
@@ -88,7 +86,7 @@ class ExploreApp(QtWidgets.QDialog):
                 self.ui.main_layout.addWidget(card)
 
         except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Eroare", f"Nu am putut încărca locațiile: {e}")
+            QtWidgets.QMessageBox.critical(self, "Eroare", f"Could not load locations: {e}")
 
     def creeaza_widget_card(self, nume_locatie):
 
@@ -111,14 +109,14 @@ class ExploreApp(QtWidgets.QDialog):
             QPushButton {
                 background-color: #3d7068; 
                 color: white; 
-                font-size: 22px;             /* Dimensiune mai echilibrată */
+                font-size: 22px;             
                 font-weight: bold;
-                border-radius: 25px;         /* Aceasta oferă rotunjirea[cite: 4, 7] */
+                border-radius: 25px;         
                 border: none;
                 padding: 5px 15px;
             }
             QPushButton:hover {
-                background-color: #4d8a7f;   /* Nuanță mai deschisă la trecerea mouse-ului */
+                background-color: #4d8a7f;  
             }
         """)
         btn_book.clicked.connect(lambda: self.deschide_rezervare(nume_locatie))
@@ -131,7 +129,7 @@ class ExploreApp(QtWidgets.QDialog):
 
     def deschide_rezervare(self, nume_locatie):
         if self.active_client is None:
-            QtWidgets.QMessageBox.warning(self, "Atentie", "Selectati un profil inainte de rezervare!")
+            QtWidgets.QMessageBox.warning(self, "Err", "No profile selected for booking")
             return
 
         self.booking_win = Ui_BookingApp(self.gateway, nume_locatie, self.active_client)
@@ -173,7 +171,7 @@ class ProfileApp(QtWidgets.QDialog):
                     self.ui.info_labels["City"].setText(p.getLocalitate())
 
         except Exception as e:
-            print(f"Eroare la popularea datelor în ProfileApp: {e}")
+            print(f"Err could not upload: {e}")
 
     def deschide_modificare(self):
         from auth_01 import CompleteProfileApp
@@ -192,7 +190,7 @@ class ProfileApp(QtWidgets.QDialog):
         selected_row = self.ui.table.currentRow()
 
         if selected_row == -1:
-            QtWidgets.QMessageBox.warning(self, "Selection", "Te rugăm să selectezi un profil din tabel!")
+            QtWidgets.QMessageBox.warning(self, "Selection", "Select profile from tabel!")
             return
 
         self.accept()

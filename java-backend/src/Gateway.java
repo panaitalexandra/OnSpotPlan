@@ -5,18 +5,15 @@ public class Gateway {
         return ManagerUtilizatori.getInstance();
     }
     public ManagerClienti getManagerClienti(String userId) {
-        return ManagerClienti.getInstance(userId); // Returnează managerul dedicat acelui user
+        return ManagerClienti.getInstance(userId);
     }
     public EventService getLocatieService() {
-        return EventService.getInstance(); // Punctul de acces pentru Explore Events
-    }
-    public String test() {
-        return "legatura stabilita";
+        return EventService.getInstance();
     }
     public static void main(String[] args) {
         GatewayServer server = new GatewayServer(new Gateway());
         server.start();
-        System.out.println("Serverul Java a pornit. Python se poate conecta!");
+        System.out.println("Java server is ON. Run Python!");
     }
 }
 

@@ -16,7 +16,6 @@ class Ui_OpenProfile(object):
         self.layout.setContentsMargins(50, 50, 50, 50)
         self.layout.setSpacing(20)
 
-        # Header
         self.label_title = QtWidgets.QLabel("My Profile")
         self.label_title.setStyleSheet("font-size: 55px; font-weight: bold; color: #1e1b4b; margin-bottom: 10px;")
         self.layout.addWidget(self.label_title)
