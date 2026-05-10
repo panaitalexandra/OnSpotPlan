@@ -4,21 +4,44 @@ from ui_sign_up import Ui_Register
 from ui_complete_profile import Ui_CompleteProfile
 from ui_profile_selection import Ui_ProfileSelection
 
-class RegisterApp(QtWidgets.QDialog):
+class RegisterApp(Ui_Register):
     def __init__(self, gateway, manager):
-        super(RegisterApp, self).__init__()
-        self.ui = Ui_Register()
-        self.ui.setupUi(self)
+        super().__init__()
         self.gateway = gateway
         self.manager = manager
-        self.ui.pushButton_register.clicked.connect(self.handle_signup)
-        self.ui.label_back_to_login.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.ui.label_back_to_login.mousePressEvent = self.switch_to_login
 
+        self.pushButton_register.clicked.connect(self.handle_signup)
+        self.label_back_to_login.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.label_back_to_login.mousePressEvent = self.switch_to_login
+        self.lineEdit_passwd.textChanged.connect(self.live_validation)
+
+    def live_validation(self):
+        parola = self.lineEdit_passwd.text()
+
+        # Referință scurtă către clasa Java prin Gateway
+        v = self.gateway.jvm.ValidatorParola
+
+        # Verificăm fiecare condiție apelând Java
+        results = {
+            "length": v.areLungimeMinima(parola),
+            "upper": v.areMajuscula(parola),
+            "digit": v.areCifra(parola),
+            "special": v.areCaracterSpecial(parola)
+        }
+
+        # Actualizăm culorile în UI pe baza răspunsului Java
+        for key, met_condition in results.items():
+            label = self.password_hints[key]
+            if met_condition:
+                label.setStyleSheet("color: #22c55e; font-size: 18px; font-weight: bold;")  # Verde
+                label.setText(label.text().replace("●", "✔"))
+            else:
+                label.setStyleSheet("color: #94a3b8; font-size: 18px;")  # Gri înapoi
+                label.setText(label.text().replace("✔", "●"))
     def handle_signup(self):
-        email = self.ui.lineEdit_email.text()
-        password = self.ui.lineEdit_passwd.text()
-        confirmation = self.ui.lineEdit_confirm_passwd.text()
+        email = self.lineEdit_email.text()
+        password = self.lineEdit_passwd.text()
+        confirmation = self.lineEdit_confirm_passwd.text()
 
         if password != confirmation:
             QtWidgets.QMessageBox.warning(self, "Error", "Passwords do not match!")
@@ -39,6 +62,9 @@ class RegisterApp(QtWidgets.QDialog):
                 QtWidgets.QMessageBox.information(self, "Success", "Account created successfully!")
                 self.complete_win = CompleteProfileApp(self.gateway, self.manager, email)
                 if self.complete_win.exec_() == QtWidgets.QDialog.Accepted:
+                    from explore_02 import ExploreApp
+                    self.dashboard = ExploreApp(self.gateway, self.manager, email)
+                    self.dashboard.show()
                     self.accept()
             else:
                 QtWidgets.QMessageBox.critical(self, "Error", "Registration failed!")
@@ -52,25 +78,26 @@ class RegisterApp(QtWidgets.QDialog):
         self.close()
 
 
-class LoginApp(QtWidgets.QDialog):
+class LoginApp(Ui_Authentification):
     def __init__(self, gateway, manager):
-        super(LoginApp, self).__init__()
-        self.ui = Ui_Authentification()
-        self.ui.setupUi(self)
+        super().__init__()
         self.gateway = gateway
         self.manager = manager
-        self.ui.pushButton_login.clicked.connect(self.handle_login)
-        self.ui.label_signin.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.ui.label_signin.mousePressEvent = self.switch_to_signup
+        self.pushButton_login.clicked.connect(self.handle_login)
+        self.label_signin.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.label_signin.mousePressEvent = self.switch_to_signup
 
     def handle_login(self):
-        email = self.ui.lineEdit_email.text()
-        password = self.ui.lineEdit_passwd.text()
+        email = self.lineEdit_email.text()
+        password = self.lineEdit_passwd.text()
 
         try:
             user = self.manager.getUtilizator(email, password)
 
             if user is not None:
+                from explore_02 import ExploreApp
+                self.dashboard = ExploreApp(self.gateway, self.manager, email)
+                self.dashboard.show()
                 self.accept()
             else:
                 QtWidgets.QMessageBox.warning(self, "Error", "Invalid email or password!")
@@ -83,23 +110,22 @@ class LoginApp(QtWidgets.QDialog):
         self.close()
 
 
-class ProfileSelectionApp(QtWidgets.QDialog):
+class ProfileSelectionApp(Ui_ProfileSelection):
     def __init__(self, gateway, manager, email):
-        super(ProfileSelectionApp, self).__init__()
-        self.ui = Ui_ProfileSelection()
-        self.ui.setupUi(self)
+        super().__init__()
         self.gateway = gateway
         self.manager = manager
         self.current_user_email = email
 
-        self.ui.btn_add.clicked.connect(self.handle_add_profile)
-        self.ui.btn_view.clicked.connect(self.handle_view_details)
-        self.ui.btn_select.clicked.connect(self.handle_select)
+        self.btn_add.clicked.connect(self.handle_add_profile)
+        self.btn_delete.clicked.connect(self.handle_delete_profile)
+        self.btn_view.clicked.connect(self.handle_view_details)
+        self.btn_select.clicked.connect(self.handle_select)
 
         self.load_profiles()
 
     def handle_select(self):
-        selected_row = self.ui.table.currentRow()
+        selected_row = self.table.currentRow()
         if selected_row == -1:
             QtWidgets.QMessageBox.warning(self, "Selection", "Choose a profile!")
             return
@@ -115,15 +141,15 @@ class ProfileSelectionApp(QtWidgets.QDialog):
         manager = self.gateway.getManagerClienti(self.current_user_email)
         lista_beneficiari = manager.getLista()
 
-        self.ui.table.setRowCount(0)
+        self.table.setRowCount(0)
         for i in range(lista_beneficiari.size()):
             client = lista_beneficiari.get(i)
             persoana = client.getPersoana()
 
-            self.ui.table.insertRow(i)
-            self.ui.table.setItem(i, 0, QtWidgets.QTableWidgetItem(persoana.getNume()))
-            self.ui.table.setItem(i, 1, QtWidgets.QTableWidgetItem(persoana.getPrenume()))
-            self.ui.table.setItem(i, 2, QtWidgets.QTableWidgetItem(persoana.getCNP()))
+            self.table.insertRow(i)
+            self.table.setItem(i, 0, QtWidgets.QTableWidgetItem(persoana.getNume()))
+            self.table.setItem(i, 1, QtWidgets.QTableWidgetItem(persoana.getPrenume()))
+            self.table.setItem(i, 2, QtWidgets.QTableWidgetItem(persoana.getCNP()))
 
     def handle_add_profile(self):
         manager = self.gateway.getManagerClienti(self.current_user_email)
@@ -136,8 +162,36 @@ class ProfileSelectionApp(QtWidgets.QDialog):
         if add_win.exec_() == QtWidgets.QDialog.Accepted:
             self.load_profiles()
 
+    def handle_delete_profile(self):
+        selected_row = self.table.currentRow()
+        if selected_row == -1:
+            QtWidgets.QMessageBox.warning(self, "Selection Required", "Please select a profile to delete.")
+            return
+
+        # Cerem confirmare (UX bun)
+        reply = QtWidgets.QMessageBox.question(
+            self, 'Confirm Delete',
+            "Are you sure you want to delete this profile? This action cannot be undone.",
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No
+        )
+
+        if reply == QtWidgets.QMessageBox.Yes:
+            try:
+                manager_clienti = self.gateway.getManagerClienti(self.current_user_email)
+
+                # IMPORTANT: Verifică dacă în Java metoda se numește stergeClient sau removeClient
+                success = manager_clienti.stergeClient(selected_row)
+
+                if success:
+                    QtWidgets.QMessageBox.information(self, "Success", "Profile deleted successfully.")
+                    self.load_profiles()  # Refresh tabel
+                else:
+                    QtWidgets.QMessageBox.critical(self, "Error", "Could not delete profile.")
+
+            except Exception as e:
+                QtWidgets.QMessageBox.critical(self, "System Error", f"Java error: {e}")
     def handle_view_details(self):
-        selected_row = self.ui.table.currentRow()
+        selected_row = self.table.currentRow()
         if selected_row == -1:
             QtWidgets.QMessageBox.warning(self, "Selection", "Select a profile first!")
             return
@@ -154,21 +208,51 @@ class ProfileSelectionApp(QtWidgets.QDialog):
         self.details_win.exec_()
         self.load_profiles()
 
-class CompleteProfileApp(QtWidgets.QDialog):
+class CompleteProfileApp(Ui_CompleteProfile):
     def __init__(self, gateway, manager,email, profile_index=None):
-        super(CompleteProfileApp, self).__init__()
-        self.ui = Ui_CompleteProfile()
-        self.ui.setupUi(self)
+        super().__init__()
         self.gateway = gateway
         self.manager = manager
         self.current_user_email = email
         self.profile_index = profile_index
-        self.ui.btn_complete.clicked.connect(self.handle_completion)
-        self.ui.btn_skip.clicked.connect(self.accept)
+
+        if self.profile_index is not None:
+            self.label_title.setText("Modify Profile")
+            self.btn_complete.setText("Update and Save")
+            self.incarca_date_existente()  # Apelăm funcția de pre-completare
+
+        self.btn_complete.clicked.connect(self.handle_completion)
+        self.btn_skip.clicked.connect(self.accept)
+
+    def incarca_date_existente(self):
+        try:
+            # Luăm managerul și lista de la Java
+            manager_clienti = self.gateway.getManagerClienti(self.current_user_email)
+            lista = manager_clienti.getLista()
+            client = lista.get(self.profile_index)
+            p = client.getPersoana()
+
+            # Punem textul existent în casetele de input folosind dicționarul self.inputs
+            if "Last Name" in self.inputs:
+                self.inputs["Last Name"].setText(p.getNume())
+            if "First Name" in self.inputs:
+                self.inputs["First Name"].setText(p.getPrenume())
+            if "CNP" in self.inputs:
+                self.inputs["CNP"].setText(p.getCNP())
+            if "Phone Number" in self.inputs:
+                self.inputs["Phone Number"].setText(client.getTelefon())
+            if "County" in self.inputs:
+                # Folosește getRegion() sau getJudet() în funcție de ce ai în Java
+                self.inputs["County"].setText(p.getRegion())
+            if "City" in self.inputs:
+                self.inputs["City"].setText(p.getLocalitate())
+
+        except Exception as e:
+            print(f"Eroare la pre-completarea datelor: {e}")
 
     def handle_completion(self):
         try:
-            data = {k: v.text().strip() for k, v in self.ui.inputs.items()}
+            data = {k: v.text().strip() for k, v in self.inputs.items()}
 
             if not all(data.values()):
                 QtWidgets.QMessageBox.warning(self, "Eroare", "All fields must be completed!")

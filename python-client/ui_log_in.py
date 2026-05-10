@@ -1,15 +1,24 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui, QtWidgets
+from ui_base_window import BaseFramelessWindow
 
-class Ui_Authentification(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(1000, 1250)
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(Dialog)
+class Ui_Authentification(BaseFramelessWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi()
+
+    def setupUi(self):
+        self.setObjectName("AuthentificationWindow")
+        self.resize(1200, 1300)
+        self.content_widget = QtWidgets.QWidget()
+        if hasattr(self, 'main_layout'):
+            self.main_layout.addWidget(self.content_widget)
+
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.content_widget)
         self.verticalLayout_2.setContentsMargins(50, 50, 50, 50)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
 
-        self.frame = QtWidgets.QFrame(Dialog)
+        self.frame = QtWidgets.QFrame(self.content_widget)
         self.frame.setStyleSheet("background-color: white;\n"
                                  "border-radius: 20px;\n"
                                  "border: 1px solid #e0e0e0;")
@@ -150,12 +159,12 @@ class Ui_Authentification(object):
         self.verticalLayout.addLayout(self.footer_layout)
         self.verticalLayout_2.addWidget(self.frame)
 
-        self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self.content_widget)
 
-    def retranslateUi(self, Dialog):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "EventHub Login"))
+        self.setWindowTitle(_translate("Dialog", "EventHub Login"))
         self.label_eventHub.setText(_translate("Dialog", "EventHub"))
         self.label_welcome.setText(_translate("Dialog", "Welcome"))
         self.label_details.setText(_translate("Dialog", "Please enter your details to log in"))
@@ -168,10 +177,7 @@ class Ui_Authentification(object):
 
 if __name__ == "__main__":
     import sys
-
     app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog()
     ui = Ui_Authentification()
-    ui.setupUi(Dialog)
-    Dialog.show()
+    ui.show()
     sys.exit(app.exec_())

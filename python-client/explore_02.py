@@ -1,5 +1,4 @@
 import random
-from operator import index
 
 from PyQt5 import QtWidgets, QtCore
 from ui_explore import Ui_Explore
@@ -7,19 +6,18 @@ from ui_filter import Ui_Filter
 from ui_open_profile import Ui_OpenProfile
 from ui_booking import Ui_BookingApp
 
-class ExploreApp(QtWidgets.QDialog):
+class ExploreApp(Ui_Explore):
     def __init__(self, gateway, manager, email):
-        super(ExploreApp, self).__init__()
-        self.ui = Ui_Explore()
-        self.ui.setupUi(self)
+        super().__init__()
         self.gateway = gateway
         self.manager = manager
         self.current_user_email = email
         self.active_client = None
         self.locatie_service = self.gateway.entry_point.getLocatieService()
         self.actualizeaza_locatii("Constanta")
-        self.ui.btn_filters.clicked.connect(self.selecteaza_oras)
-        self.ui.btn_profile.clicked.connect(self.deschide_profil)
+        self.btn_filters.clicked.connect(self.selecteaza_oras)
+        self.btn_profile.clicked.connect(self.deschide_profil)
+        self.btn_logout.clicked.connect(self.handle_logout)
         self.seteaza_profil_implicit()
 
     def seteaza_profil_implicit(self):
@@ -32,9 +30,10 @@ class ExploreApp(QtWidgets.QDialog):
                 persoana = self.active_client.getPersoana()
 
                 nume_complet = f"{persoana.getNume()} {persoana.getPrenume()}"
-                self.ui.lbl_active_user.setText(f"Current Profile: {nume_complet}")
+                self.lbl_active_user.setText(f"Current Profile: {nume_complet}")
+                self.lbl_active_user.setStyleSheet("color: #38bdf8; font-weight: bold; font-size: 30px;")
             else:
-                self.ui.lbl_active_user.setText("No profile selected")
+                self.lbl_active_user.setText("No profile selected")
 
         except Exception as e:
             print(f"Err no profile selected: {e}")
@@ -50,10 +49,28 @@ class ExploreApp(QtWidgets.QDialog):
                     persoana = self.active_client.getPersoana()
 
                     nume_activ = f"{persoana.getNume()} {persoana.getPrenume()}"
-                    self.ui.lbl_active_user.setText(f"Current Profile: {nume_activ}")
-                    self.ui.lbl_active_user.setStyleSheet("color: #38bdf8; font-weight: bold; font-size: 16px;")
+                    self.lbl_active_user.setText(f"Current Profile: {nume_activ}")
+                    self.lbl_active_user.setStyleSheet("color: #38bdf8; font-weight: bold; font-size: 30px;")
         except Exception as e:
             print(f"Err: {e}")
+
+    def handle_logout(self):
+        # Cerem confirmare (Opțional, dar recomandat pentru UX)
+        reply = QtWidgets.QMessageBox.question(
+            self, 'Logout', "Are you sure you want to log out?",
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No
+        )
+
+        if reply == QtWidgets.QMessageBox.Yes:
+            from auth_01 import LoginApp
+
+            self.login_win = LoginApp(self.gateway, self.manager)
+
+            # 2. Afișăm fereastra de Login
+            self.login_win.show()
+
+            # 3. Închidem fereastra curentă (Explore)
+            self.close()
 
     def deschide_rezervare(self, nume_locatie):
         if self.active_client is None:
@@ -74,8 +91,8 @@ class ExploreApp(QtWidgets.QDialog):
 
     def actualizeaza_locatii(self, judet_selectat):
         try:
-            while self.ui.main_layout.count() > 6:
-                item = self.ui.main_layout.takeAt(6)
+            while self.main_layout.count() > 6:
+                item = self.main_layout.takeAt(6)
                 if item.widget():
                     item.widget().deleteLater()
 
@@ -83,7 +100,7 @@ class ExploreApp(QtWidgets.QDialog):
 
             for nume in locatii:
                 card = self.creeaza_widget_card(nume)
-                self.ui.main_layout.addWidget(card)
+                self.main_layout.addWidget(card)
 
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Eroare", f"Could not load locations: {e}")
@@ -135,19 +152,19 @@ class ExploreApp(QtWidgets.QDialog):
         self.booking_win = Ui_BookingApp(self.gateway, nume_locatie, self.active_client)
         self.booking_win.exec_()
 
-class ProfileApp(QtWidgets.QDialog):
+class ProfileApp(Ui_OpenProfile):
     def __init__(self, gateway, manager, email, index=0):
-        super(ProfileApp, self).__init__()
-        self.ui = Ui_OpenProfile()
-        self.ui.setupUi(self)
+        super().__init__()
         self.gateway = gateway
         self.manager = manager
         self.current_user_email = email
         self.profile_index = index
         self.incarca_date_profil()
 
-        self.ui.btn_modify.clicked.connect(self.deschide_modificare)
-        self.ui.btn_close.clicked.connect(self.close)
+        self.btn_modify.clicked.connect(self.deschide_modificare)
+        self.btn_back_explore.clicked.connect(self.close)
+        if hasattr(self, 'btn_back_explore'):
+            self.btn_close.clicked.connect(self.close)
 
     def incarca_date_profil(self):
         try:
@@ -158,17 +175,17 @@ class ProfileApp(QtWidgets.QDialog):
                 profil = lista.get(self.profile_index)
                 p = profil.getPersoana()
 
-                self.ui.info_labels["Full Name"].setText(f"{p.getNume()} {p.getPrenume()}")
+                self.info_labels["Full Name"].setText(f"{p.getNume()} {p.getPrenume()}")
 
-                if "CNP" in self.ui.info_labels:
-                    self.ui.info_labels["CNP"].setText(p.getCNP())
+                if "CNP" in self.info_labels:
+                    self.info_labels["CNP"].setText(p.getCNP())
 
-                self.ui.info_labels["Phone Number"].setText(p.getTelefon())
+                self.info_labels["Phone Number"].setText(p.getTelefon())
 
-                self.ui.info_labels["Region"].setText(p.getJudet())
+                self.info_labels["Region"].setText(p.getRegion())
 
-                if "City" in self.ui.info_labels:
-                    self.ui.info_labels["City"].setText(p.getLocalitate())
+                if "City" in self.info_labels:
+                    self.info_labels["City"].setText(p.getLocalitate())
 
         except Exception as e:
             print(f"Err could not upload: {e}")
@@ -187,7 +204,7 @@ class ProfileApp(QtWidgets.QDialog):
             self.incarca_date_profil()
 
     def handle_select(self):
-        selected_row = self.ui.table.currentRow()
+        selected_row = self.table.currentRow()
 
         if selected_row == -1:
             QtWidgets.QMessageBox.warning(self, "Selection", "Select profile from tabel!")

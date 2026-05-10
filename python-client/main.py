@@ -6,7 +6,7 @@ from explore_02 import ExploreApp
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-
+    app.setQuitOnLastWindowClosed(True)
     try:
         gateway = JavaGateway()
         java_manager = gateway.entry_point.getManagerUtilizatori()
@@ -14,12 +14,7 @@ if __name__ == "__main__":
         login = LoginApp(gateway, java_manager)
         login.show()
 
-        if login.exec_() == QtWidgets.QDialog.Accepted:
-            user = login.ui.lineEdit_email.text()
-            dashboard = ExploreApp(gateway, java_manager, user)
-            dashboard.show()
-
-        sys.exit(app.exec_())
+        sys.exit(app.exec_())  # Bucla principală pornește aici și rămâne aici.
 
     except Exception as e:
         print(f"Make sure Gateway.java is running! Error occurred: {e}")

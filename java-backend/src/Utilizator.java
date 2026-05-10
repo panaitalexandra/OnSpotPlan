@@ -34,6 +34,12 @@ public class Utilizator {
      public boolean autentificare(String email, String parola) {
         return p.getEmail().equals(email) && p.getParola().equals(parola);
     }
+    public String getEmail() {
+        return p.getEmail();
+    }
+    public String getParola() {
+        return p.getParola();
+    }
     @Override
     public String toString() {
         if (p.getNume() == null || p.getNume().isEmpty()) 

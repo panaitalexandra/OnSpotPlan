@@ -14,3 +14,6 @@ a@a.aa|Zxcvbnm1#
 a|a
 new@gmail.com|Parola1#
 user@a.com|Usernou1#
+ana@ana.ana|Parola1#
+ale@ale.ale|Parola1#
+test@gmail.com|Parola1#

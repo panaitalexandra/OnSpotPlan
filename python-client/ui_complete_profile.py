@@ -1,17 +1,24 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui, QtWidgets
+from ui_base_window import BaseFramelessWindow
 
+class Ui_CompleteProfile(BaseFramelessWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi()
 
-class Ui_CompleteProfile(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(1000, 1300)
-        Dialog.setStyleSheet("background-color: #121212;")
+    def setupUi(self):
+        self.setObjectName("CompleteProfileWindow")
+        self.resize(1000, 1250)
 
-        self.verticalLayout_main = QtWidgets.QVBoxLayout(Dialog)
+        self.content_widget = QtWidgets.QWidget()
+        if hasattr(self, 'main_layout'):
+            self.main_layout.addWidget(self.content_widget)
+
+        self.verticalLayout_main = QtWidgets.QVBoxLayout(self.content_widget)
         self.verticalLayout_main.setContentsMargins(50, 40, 50, 40)
 
-        self.frame = QtWidgets.QFrame(Dialog)
+        self.frame = QtWidgets.QFrame(self.content_widget)
         self.frame.setStyleSheet("background-color: white; border-radius: 30px;")
         self.layout = QtWidgets.QVBoxLayout(self.frame)
         self.layout.setContentsMargins(40, 40, 40, 40)

@@ -1,15 +1,25 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui, QtWidgets
+from ui_base_window import BaseFramelessWindow
 
-class Ui_Register(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(1000, 1250)
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(Dialog)
+class Ui_Register(BaseFramelessWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi()
+
+    def setupUi(self):
+        self.setObjectName("RegisterWindow")
+        self.resize(1200, 1300)
+
+        self.content_widget = QtWidgets.QWidget()
+        if hasattr(self, 'main_layout'):
+            self.main_layout.addWidget(self.content_widget)
+
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.content_widget)
         self.verticalLayout_2.setContentsMargins(50, 50, 50, 50)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
 
-        self.frame = QtWidgets.QFrame(Dialog)
+        self.frame = QtWidgets.QFrame(self.content_widget)
         self.frame.setStyleSheet("background-color: white;\n"
                                  "border-radius: 20px;\n"
                                  "border: 1px solid #e0e0e0;")
@@ -95,8 +105,25 @@ class Ui_Register(object):
         self.lineEdit_confirm_passwd.setEchoMode(QtWidgets.QLineEdit.Password)
         self.lineEdit_confirm_passwd.setObjectName("lineEdit_confirm_passwd")
         self.input_Layout.addWidget(self.lineEdit_confirm_passwd)
+        # În ui_sign_up.py, sub self.lineEdit_passwd adăugăm un layout de indicii
+        self.hints_layout = QtWidgets.QVBoxLayout()
+        self.hints_layout.setSpacing(5)
+
+        # Creăm un dicționar pentru a gestiona ușor etichetele
+        self.password_hints = {
+            "length": QtWidgets.QLabel("● Minim 8 caractere"),
+            "upper": QtWidgets.QLabel("● Cel puțin o majusculă"),
+            "digit": QtWidgets.QLabel("● Cel puțin o cifră"),
+            "special": QtWidgets.QLabel("● Un caracter special (!, #, $, %, ^, *)")
+        }
+
+        for hint in self.password_hints.values():
+            hint.setStyleSheet("color: #94a3b8; font-size: 18px;")  # Gri inițial
+            self.hints_layout.addWidget(hint)
 
         self.verticalLayout.addLayout(self.input_Layout)
+        self.verticalLayout.addLayout(self.hints_layout)
+
 
         self.footer_layout = QtWidgets.QVBoxLayout()
         self.footer_layout.setContentsMargins(-1, 40, -1, -1)
@@ -128,12 +155,12 @@ class Ui_Register(object):
         self.verticalLayout.addLayout(self.footer_layout)
         self.verticalLayout_2.addWidget(self.frame)
 
-        self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, Dialog):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "EventHub - Create Account"))
+        self.setWindowTitle(_translate("Dialog", "EventHub - Create Account"))
         self.label_eventHub.setText(_translate("Dialog", "EventHub"))
         self.label_welcome.setText(_translate("Dialog", "Join Us"))
         self.label_details.setText(_translate("Dialog", "Please enter your details to create a new account"))
@@ -146,8 +173,6 @@ class Ui_Register(object):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog()
     ui = Ui_Register()
-    ui.setupUi(Dialog)
-    Dialog.show()
+    ui.show()
     sys.exit(app.exec_())

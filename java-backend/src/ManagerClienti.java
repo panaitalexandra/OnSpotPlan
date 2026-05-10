@@ -35,7 +35,14 @@ public class ManagerClienti {
         salveaza();
         return true;
     }
-
+    public boolean stergeClient(int index) {
+        if (index >= 0 && index < clienti.size()) {
+            clienti.remove(index); // Stergem din memoria RAM (ArrayList)
+            salveaza();            // Actualizam fisierul .txt ca sa ramana sters si la repornire
+            return true;
+        }
+        return false;
+    }
     public void salveaza() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(fisier))) {
             for (Client c : clienti) {

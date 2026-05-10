@@ -1,18 +1,25 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui, QtWidgets
+from ui_base_window import BaseFramelessWindow
 
+class Ui_Explore(BaseFramelessWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi()
 
-class Ui_Explore(object):
-    def setupUi(self, ExploreEvents):
-        ExploreEvents.setObjectName("ExploreEvents")
-        ExploreEvents.resize(1000, 1250)
-        ExploreEvents.setStyleSheet("background-color: #121212;")
+    def setupUi(self):
+        self.setObjectName("ExploreEventsWindow")
+        self.resize(1000, 1250)
 
-        self.verticalLayout_main = QtWidgets.QVBoxLayout(ExploreEvents)
+        self.content_widget = QtWidgets.QWidget()
+        if hasattr(self, 'main_layout'):
+            self.main_layout.addWidget(self.content_widget)
+
+        self.verticalLayout_main = QtWidgets.QVBoxLayout(self.content_widget)
         self.verticalLayout_main.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_main.setObjectName("verticalLayout_main")
 
-        self.scroll_area = QtWidgets.QScrollArea(ExploreEvents)
+        self.scroll_area = QtWidgets.QScrollArea(self.content_widget)
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setStyleSheet("border: none; background-color: transparent;")
         self.scroll_area.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
@@ -47,10 +54,27 @@ class Ui_Explore(object):
                 background-color: #e2e8f0;
             }
         """)
-
+        self.btn_logout = QtWidgets.QPushButton("Log Out")
+        self.btn_logout.setMinimumHeight(70)
+        self.btn_logout.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_logout.setStyleSheet("""
+                    QPushButton {
+                        background-color: #f1f5f9;
+                        color: #ef4444;
+                        border: 2px solid #ef4444;
+                        border-radius: 35px;
+                        padding: 0 30px;
+                        font-size: 24px;
+                        font-weight: bold;
+                    }
+                    QPushButton:hover {
+                        background-color: #fee2e2;
+                    }
+                """)
         self.header_layout.addWidget(self.label_logo)
         self.header_layout.addStretch()
         self.header_layout.addWidget(self.btn_profile)
+        self.header_layout.addWidget(self.btn_logout)
 
         self.main_layout.addLayout(self.header_layout)
         self.lbl_active_user = QtWidgets.QLabel("Current Profile: None")
@@ -96,20 +120,17 @@ class Ui_Explore(object):
 
         self.scroll_area.setWidget(self.main_container)
         self.verticalLayout_main.addWidget(self.scroll_area)
-        self.retranslateUi(ExploreEvents)
-        QtCore.QMetaObject.connectSlotsByName(ExploreEvents)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, ExploreEvents):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        ExploreEvents.setWindowTitle(_translate("ExploreEvents", "Explore Events - EventHub"))
+        self.setWindowTitle(_translate("ExploreEvents", "Explore Events - EventHub"))
 
 
 if __name__ == "__main__":
     import sys
-
     app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog()
     ui = Ui_Explore()
-    ui.setupUi(Dialog)
-    Dialog.show()
+    ui.setupUi()
     sys.exit(app.exec_())

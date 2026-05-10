@@ -37,20 +37,35 @@ public class ManagerUtilizatori {
         
         }
     }
-    // Adaugă aceste metode în ManagerUtilizatori.java pentru a fi apelate din Python
     public boolean isEmailValid(String email) {
         return ValidatorEmail.esteValid(email);
     }
 
-    public boolean isParolaValida(String parola) {
-        return ValidatorParola.esteValida(parola);
+    public boolean isEmailRegistered(String email) {
+        for (Utilizator user : users) {
+            // Presupunem că Utilizator are getEmail()
+            if (user.getEmail().equalsIgnoreCase(email.trim())) {
+                return true;
+            }
+        }
+        return false;
     }
-    public Utilizator inregistreazaUtilizator(String email, String parola){
-        if (!ValidatorEmail.esteValid(email))
-            return null;
+    public boolean isParolaValida(String parola) {
+        return ValidatorParola.areLungimeMinima(parola) &&
+                ValidatorParola.areMajuscula(parola) &&
+                ValidatorParola.areCifra(parola) &&
+                ValidatorParola.areCaracterSpecial(parola);
+    }
 
-        if (!ValidatorParola.esteValida(parola))
-            return null;
+    public Utilizator inregistreazaUtilizator(String email, String parola) {
+        // Verificăm formatul email-ului
+        if (!isEmailValid(email)) return null;
+
+        // Verificăm dacă email-ul e deja luat
+        if (isEmailRegistered(email)) return null;
+
+        // Verificăm întreaga structură a parolei
+        if (!isParolaValida(parola)) return null;
 
         var user = new Utilizator(email, parola);
         users.add(user);

@@ -2,14 +2,18 @@ eventhubwelcomeapril
 
 
 to do
-- de fiecare data cand se deschidem o noua fereastra, este si cea din spate disponibila si se vede si e urat
-- nu vrem asta
+DONE 1. de fiecare data cand se deschidem o noua fereastra, este si cea din spate disponibila si se vede si e urat
 - in schimb putem adauga butonul de back and forward
 
+DONE 2. redimensionare ferestre sa fie toate same
 
-db
+3. validatori cu mesaje foarte explicite ce si cum 
+
+IN PROGRESS 4. db
 - persoana = user = client
 - profiles
 - events
 - bookings
 - dates
+
+5. cand cineva ceraza cont cu email deja inreg, mesaj succint registration failed. - tre mai mult
