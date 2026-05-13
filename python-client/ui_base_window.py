@@ -15,6 +15,7 @@ class BaseFramelessWindow(QtWidgets.QDialog):
         self.master_layout = QtWidgets.QVBoxLayout(self)
         self.master_layout.setContentsMargins(0, 0, 0, 0)
         self.master_layout.setSpacing(0)
+        self.master_layout.setSpacing(0)
 
         # --- 3. BARA DE TITLU (Sus) ---
         self.title_bar = QtWidgets.QWidget()

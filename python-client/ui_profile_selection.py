@@ -9,7 +9,7 @@ class Ui_ProfileSelection(BaseFramelessWindow):
 
     def setupUi(self):
         self.setObjectName("ProfileSelectionWindow")
-        self.resize(1000, 1250)
+        self.resize(1200, 1300)
 
         # Widget-ul de conținut (cel care va sta sub bara de titlu)
         self.content_widget = QtWidgets.QWidget()
@@ -44,7 +44,6 @@ class Ui_ProfileSelection(BaseFramelessWindow):
         self.layout.setContentsMargins(50, 40, 50, 50)
         self.layout.setSpacing(30)
 
-        # --- TITLU ---
         self.label_title = QtWidgets.QLabel("Manage Profiles")
         self.label_title.setStyleSheet("""
             font-size: 48px; 
@@ -56,7 +55,6 @@ class Ui_ProfileSelection(BaseFramelessWindow):
         """)
         self.layout.addWidget(self.label_title)
 
-        # --- TABEL ---
         self.table = QtWidgets.QTableWidget()
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["LAST NAME", "FIRST NAME", "CNP"])
@@ -102,7 +100,6 @@ class Ui_ProfileSelection(BaseFramelessWindow):
         self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.layout.addWidget(self.table)
 
-        # --- BUTOANE ---
         self.btn_layout = QtWidgets.QHBoxLayout()
         self.btn_layout.setSpacing(20)
 

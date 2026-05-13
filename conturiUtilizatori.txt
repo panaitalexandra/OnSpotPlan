@@ -1,2 +1,0 @@
-ale@a.ro|Parola1#
-admin@a.com|Adminpass1#

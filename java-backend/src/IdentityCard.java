@@ -1,6 +1,6 @@
 /**
  *
- * @author Mihaila ALexia-Andreea
+ * @author Panait Claudia-Alexandra
  */
 public class IdentityCard {
     private String CNP, series, number, region, city;

@@ -1,6 +1,6 @@
 /**
  *
- * @author Mihaila ALexia-Andreea
+ * @author Panait Claudia-Alexandra
  */
 import java.io.*;
 import java.util.ArrayList;

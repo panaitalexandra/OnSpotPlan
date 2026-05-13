@@ -2,7 +2,6 @@
  *
  * @author Panait Claudia-Alexandra
  */
-import java.util.regex.Pattern;
 
 public class ValidatorParola {
     public static boolean areLungimeMinima(String parola) {

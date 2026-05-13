@@ -18,10 +18,8 @@ class RegisterApp(Ui_Register):
     def live_validation(self):
         parola = self.lineEdit_passwd.text()
 
-        # Referință scurtă către clasa Java prin Gateway
         v = self.gateway.jvm.ValidatorParola
 
-        # Verificăm fiecare condiție apelând Java
         results = {
             "length": v.areLungimeMinima(parola),
             "upper": v.areMajuscula(parola),
@@ -29,7 +27,6 @@ class RegisterApp(Ui_Register):
             "special": v.areCaracterSpecial(parola)
         }
 
-        # Actualizăm culorile în UI pe baza răspunsului Java
         for key, met_condition in results.items():
             label = self.password_hints[key]
             if met_condition:
@@ -168,7 +165,6 @@ class ProfileSelectionApp(Ui_ProfileSelection):
             QtWidgets.QMessageBox.warning(self, "Selection Required", "Please select a profile to delete.")
             return
 
-        # Cerem confirmare (UX bun)
         reply = QtWidgets.QMessageBox.question(
             self, 'Confirm Delete',
             "Are you sure you want to delete this profile? This action cannot be undone.",
@@ -179,7 +175,6 @@ class ProfileSelectionApp(Ui_ProfileSelection):
             try:
                 manager_clienti = self.gateway.getManagerClienti(self.current_user_email)
 
-                # IMPORTANT: Verifică dacă în Java metoda se numește stergeClient sau removeClient
                 success = manager_clienti.stergeClient(selected_row)
 
                 if success:
@@ -232,7 +227,6 @@ class CompleteProfileApp(Ui_CompleteProfile):
             client = lista.get(self.profile_index)
             p = client.getPersoana()
 
-            # Punem textul existent în casetele de input folosind dicționarul self.inputs
             if "Last Name" in self.inputs:
                 self.inputs["Last Name"].setText(p.getNume())
             if "First Name" in self.inputs:

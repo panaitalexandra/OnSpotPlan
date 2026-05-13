@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 /**
  *
- * @author Mihaila Alexia-Andreea
+ * @author Panait Claudia-Alexandra
  */
 public class EmailService {
     private final String fisierNotificari = "notificari.txt";

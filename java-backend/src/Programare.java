@@ -5,56 +5,59 @@
 import java.time.*;
 
 public class Programare {
-    private Client client;
-    private String centruVaccinare;
+    private Client beneficiar;
+    private Event eveniment;
     private LocalDate data;
     private LocalTime ora;
-    private Vaccin tipVaccin; // AstraZeneca, Pfizer, Moderna
-    private LocalDate dataRapel;
+    private Bilet bilet;
 
-    public Programare(Client client, String centruVaccinare, LocalDate data, LocalTime ora, Vaccin tipVaccin) {
-        this.client = client;
-        this.centruVaccinare = centruVaccinare;
+    public Programare(Client beneficiar, Event eveniment, LocalDate data, LocalTime ora, Bilet bilet) {
+        this.beneficiar = beneficiar;
+        this.eveniment = eveniment;
         this.data = data;
         this.ora = ora;
-        this.tipVaccin = tipVaccin;
-        this.dataRapel = calculeazaRapel(data, tipVaccin);
+        this.bilet = bilet;
     }
-    private LocalDate calculeazaRapel(LocalDate primaDoza, Vaccin tipVaccin) {
-        int zile = tipVaccin.getZilePanaLaRapel();
-        return zile > 0 ? primaDoza.plusDays(zile) : null;
-    }    
-    
     public Client getBeneficiar() {
-        return client;
+        return beneficiar;
     }
+
+    public String getEveniment() {
+        return eveniment.getNume();
+    }
+
     public LocalDate getData() {
         return data;
     }
+
     public LocalTime getOra() {
         return ora;
     }
-    public String getCentruVaccinare() {
-        return centruVaccinare;
+
+    public Bilet getBilet() {
+        return bilet;
     }
 
     @Override
     public String toString() {
-        return "Programare pentru " + client.getPersoana().getNume() + " " + client.getPersoana().getPrenume() +
-               "\nCentrul: " + centruVaccinare +
-               "\nData: " + data + " la ora " + ora +
-               "\nVaccin: " + tipVaccin +
-               "\nRapel: " + (dataRapel != null ? dataRapel : "N/A");
+        return "Rezervare Eveniment: " + getEveniment() +
+                "\nParticipant: " + beneficiar.getPersoana().getNume() + " " + beneficiar.getPersoana().getPrenume() +
+                "\nData: " + data + " la ora " + ora +
+                "\nTip Bilet: " + bilet.getTip();
     }
 
     public String toFileString() {
-        return client.getPersoana().getNume() + ";" +
-                client.getPersoana().getPrenume() + ";" +
-                client.getPersoana().getCNP() + ";" +
-                centruVaccinare + ";" +
-                data.toString() + ";" +
-                ora.toString() + ";" +
-                tipVaccin.toString();
+        Persoana p = beneficiar.getPersoana();
+        return String.join(";",
+                p.getNume(),
+                p.getPrenume(),
+                p.getCNP(),
+                beneficiar.getTelefon(),
+                getEveniment(),
+                data.toString(),
+                ora.toString(),
+                bilet.getTip()
+        );
     }
 }
 

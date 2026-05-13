@@ -6,7 +6,7 @@ from ui_base_window import BaseFramelessWindow
 class Ui_Filter(BaseFramelessWindow):
     def __init__(self, parent=None):
         super().__init__()
-        self.setFixedSize(1000, 1250)
+        self.setFixedSize(1200, 1300)
         self.selected_city = None
         self.setupUi()
 

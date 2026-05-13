@@ -32,7 +32,6 @@ class Ui_Register(BaseFramelessWindow):
         self.verticalLayout.setSpacing(30)
         self.verticalLayout.setObjectName("verticalLayout")
 
-        # --- HEADER SECTION ---
         self.header_layout = QtWidgets.QVBoxLayout()
         self.header_layout.setSpacing(15)
         self.header_layout.setObjectName("header_layout")
@@ -105,11 +104,9 @@ class Ui_Register(BaseFramelessWindow):
         self.lineEdit_confirm_passwd.setEchoMode(QtWidgets.QLineEdit.Password)
         self.lineEdit_confirm_passwd.setObjectName("lineEdit_confirm_passwd")
         self.input_Layout.addWidget(self.lineEdit_confirm_passwd)
-        # În ui_sign_up.py, sub self.lineEdit_passwd adăugăm un layout de indicii
         self.hints_layout = QtWidgets.QVBoxLayout()
         self.hints_layout.setSpacing(5)
 
-        # Creăm un dicționar pentru a gestiona ușor etichetele
         self.password_hints = {
             "length": QtWidgets.QLabel("● Minim 8 caractere"),
             "upper": QtWidgets.QLabel("● Cel puțin o majusculă"),

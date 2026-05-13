@@ -1,6 +1,6 @@
 /**
  *
- * @author Mihaila Alexia-Andreea
+ * @author Panait Claudia-Alexandra
  */
 import java.util.regex.Pattern;
 

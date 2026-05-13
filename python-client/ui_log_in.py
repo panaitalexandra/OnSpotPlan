@@ -110,20 +110,6 @@ class Ui_Authentification(BaseFramelessWindow):
         self.lineEdit_passwd.setObjectName("lineEdit_passwd")
         self.input_Layout.addWidget(self.lineEdit_passwd)
 
-        self.checkBox = QtWidgets.QCheckBox(self.frame)
-        self.checkBox.setStyleSheet("QCheckBox {\n"
-                                    "    color: #4b5563;\n"
-                                    "    font-size: 24px;\n"  
-                                    "    spacing: 15px;\n"
-                                    "    border: none;\n"
-                                    "}\n"
-                                    "QCheckBox::indicator {\n"
-                                    "    width: 20px;\n"  
-                                    "    height: 20px;\n"
-                                    "}")
-        self.checkBox.setObjectName("checkBox")
-        self.input_Layout.addWidget(self.checkBox)
-
         self.verticalLayout.addLayout(self.input_Layout)
 
         self.footer_layout = QtWidgets.QVBoxLayout()
@@ -170,14 +156,5 @@ class Ui_Authentification(BaseFramelessWindow):
         self.label_details.setText(_translate("Dialog", "Please enter your details to log in"))
         self.label_email.setText(_translate("Dialog", "Email Address"))
         self.label_passwd.setText(_translate("Dialog", "Password"))
-        self.checkBox.setText(_translate("Dialog", "Remember me for 30 days"))
         self.pushButton_login.setText(_translate("Dialog", "Log in"))
         self.label_signin.setText(_translate("Dialog", "Don't have an account? Sign up"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    ui = Ui_Authentification()
-    ui.show()
-    sys.exit(app.exec_())

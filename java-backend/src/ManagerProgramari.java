@@ -1,6 +1,6 @@
 /**
  *
- * @author Mihaila ALexia-Andreea
+ * @author Panait Claudia-Alexandra
  */
 import java.io.*;
 import java.time.*;
@@ -8,18 +8,33 @@ import java.util.*;
 
 public class ManagerProgramari {
     private List<Programare> programari;
+    private static ManagerProgramari instanta;
 
-    public ManagerProgramari() {
+    private ManagerProgramari() {
         programari = new ArrayList<>();
         citesteDinFisier();
     }
+    public static ManagerProgramari getInstance() {
+        if (instanta == null) {
+            instanta = new ManagerProgramari();
+        }
+        return instanta;
+    }
 
     public boolean adaugaProgramare(Programare p) {
-        for (Programare prog : programari)
-            if (prog.getBeneficiar().equals(p.getBeneficiar()) &&
-                    prog.getData().equals(p.getData()) &&
-                    prog.getOra().equals(p.getOra()))
+        String cnpNou = p.getBeneficiar().getPersoana().getCNP();
+        String numeEvNou = p.getEveniment();
+
+        for (Programare existent : programari) {
+            String cnpExistent = existent.getBeneficiar().getPersoana().getCNP();
+            String numeEvExistent = existent.getEveniment();
+
+            if (cnpExistent.equals(cnpNou) &&
+                    numeEvExistent.equals(numeEvNou) &&
+                    existent.getData().equals(p.getData()) &&
+                    existent.getOra().equals(p.getOra()))
                 return false;
+        }
 
         programari.add(p);
         scrieInFisier();
@@ -56,32 +71,45 @@ public class ManagerProgramari {
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String linie;
             while ((linie = br.readLine()) != null) {
-                // Format: nume;prenume;cnp;data;ora;centru
                 String[] parti = linie.split(";");
-                if (parti.length == 7) {
+                if (parti.length == 8) {
                     String nume = parti[0];
                     String prenume = parti[1];
                     String cnp = parti[2];
-                    String centru = parti[3];
-                    LocalDate data = LocalDate.parse(parti[4]);
-                    LocalTime ora = LocalTime.parse(parti[5]);
-                    String vaccin = parti[6];
+                    String telefon = parti[3];
+                    String numeEv = parti[4];
+                    LocalDate data = LocalDate.parse(parti[5]);
+                    LocalTime ora = LocalTime.parse(parti[6]);
+                    String tipBilet = parti[7];
 
-                    Client b = new Client(nume, prenume, cnp, null);
-                    Vaccin tipVaccin = new Vaccin(vaccin);
-                    Programare p = new Programare(b, centru, data, ora, tipVaccin);
+                    Client b = new Client(nume, prenume, cnp, telefon);
+                    Event ev = new Event("N/A", numeEv, "Loaded from history", "N/A", "N/A", "N/A", 0.0);
+                    Bilet t = new Bilet(tipBilet);
+                    Programare p = new Programare(b, ev, data, ora, t);
+
                     programari.add(p);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Eroare la incarcarea fisierului: " + e.getMessage());
         }
     }
 
     private void scrieInFisier() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("events_booked.txt"))) {
             for (Programare p : programari) {
-                bw.write(p.toFileString());
+                Persoana pers = p.getBeneficiar().getPersoana();
+                String linie = String.join(";",
+                        pers.getNume(),
+                        pers.getPrenume(),
+                        pers.getCNP(),
+                        p.getBeneficiar().getTelefon(),
+                        p.getEveniment(),
+                        p.getData().toString(),
+                        p.getOra().toString(),
+                        p.getBilet().getTip()
+                );
+                bw.write(linie);
                 bw.newLine();
             }
         } catch (IOException e) {

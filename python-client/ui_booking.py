@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtWidgets, QtCore, QtGui
 import datetime
+import traceback
 from ui_base_window import BaseFramelessWindow
 
 class Ui_BookingApp(BaseFramelessWindow):
@@ -14,9 +15,8 @@ class Ui_BookingApp(BaseFramelessWindow):
 
     def setupUi(self):
         self.setObjectName("BookingWindow")
-        self.resize(1000, 1250)
+        self.resize(1200, 1300)
 
-        # Widget-ul de conținut (ancorat în body-ul alb al ferestrei mamă)
         self.content_widget = QtWidgets.QWidget()
         self.content_widget.setStyleSheet("""
             QWidget {
@@ -119,6 +119,12 @@ class Ui_BookingApp(BaseFramelessWindow):
         self.btn_confirm.clicked.connect(self.handle_booking)
         self.right_panel.addWidget(self.btn_confirm)
 
+        self.btn_back = QtWidgets.QPushButton("Back to Explore")
+        self.btn_back.setObjectName("BackBtn")
+        self.btn_back.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_back.clicked.connect(self.close)  # Închide dialogul/fereastra
+        self.right_panel.addWidget(self.btn_back, 0, QtCore.Qt.AlignCenter)
+
         self.layout_horizontal.addLayout(self.right_panel, 40)
 
     def update_availability(self):
@@ -128,44 +134,43 @@ class Ui_BookingApp(BaseFramelessWindow):
     def handle_booking(self):
         selected_item = self.list_slots.currentItem()
         if not selected_item:
-            QtWidgets.QMessageBox.warning(self, "Selection Error", "Please select a time slot first!")
+            QtWidgets.QMessageBox.warning(self, "Selection Error", "Please select a time slot!")
             return
 
         try:
             q_date = self.calendar.selectedDate()
             java_date = self.gateway.jvm.java.time.LocalDate.of(q_date.year(), q_date.month(), q_date.day())
 
-            time_str = selected_item.text().split(" ")[0]
-            java_time = self.gateway.jvm.java.time.LocalTime.parse(time_str)
+            time_str_raw = selected_item.text()
+            dt_obj = datetime.datetime.strptime(time_str_raw, "%I:%M %p")
+            java_time = self.gateway.jvm.java.time.LocalTime.of(dt_obj.hour, dt_obj.minute)
 
-            # --- CORECȚIE TEMATICĂ ---
-            # Schimbat din "Vaccin" în "Bilet" conform tematicii Event Hub
             ticket_type = self.gateway.jvm.Bilet("Standard Ticket")
-
+            java_event = self.gateway.jvm.Event("ID", self.event_name, "Desc", "Reg", "Loc", "Img", 0.0)
             new_booking = self.gateway.jvm.Programare(
                 self.active_client,
-                self.event_name,
+                java_event,
                 java_date,
                 java_time,
                 ticket_type
             )
 
-            manager = self.gateway.jvm.ManagerProgramari()
+            manager = self.gateway.jvm.ManagerProgramari.getInstance()
+
+            # Preluăm rezultatul boolean din Java
             is_added = manager.adaugaProgramare(new_booking)
 
             if is_added:
-                p = self.active_client.getPersoana()
-                success_msg = (
-                    f"Booking Confirmed!\n\n"
-                    f"Attendee: {p.getNume()} {p.getPrenume()}\n"
-                    f"Event: {self.event_name}\n"
-                    f"Date: {q_date.toString('dd.MM.yyyy')}\n"
-                    f"Time: {time_str}"
-                )
-                QtWidgets.QMessageBox.information(self, "Success", success_msg)
-                self.accept()
+                # DOAR dacă Java a returnat TRUE
+                QtWidgets.QMessageBox.information(self, "Success", f"Booking Confirmed for {self.event_name}!")
+                self.close()
             else:
-                QtWidgets.QMessageBox.warning(self, "Conflict", "You already have a booking for this slot!")
+                # DACĂ Java a returnat FALSE (duplicat detectat)
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    "Duplicate Reservation",
+                    "You already have a booking for this event at the selected time!"
+                )
 
         except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "System Error", f"Backend communication failed: {e}")
+            QtWidgets.QMessageBox.critical(self, "System Error", f"Backend Error: {e}")

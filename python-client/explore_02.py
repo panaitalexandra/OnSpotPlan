@@ -4,6 +4,7 @@ from PyQt5 import QtWidgets, QtCore
 from ui_explore import Ui_Explore
 from ui_filter import Ui_Filter
 from ui_open_profile import Ui_OpenProfile
+from ui_event import Ui_Event
 from ui_booking import Ui_BookingApp
 
 class ExploreApp(Ui_Explore):
@@ -66,20 +67,29 @@ class ExploreApp(Ui_Explore):
 
             self.login_win = LoginApp(self.gateway, self.manager)
 
-            # 2. Afișăm fereastra de Login
             self.login_win.show()
 
-            # 3. Închidem fereastra curentă (Explore)
             self.close()
 
     def deschide_rezervare(self, nume_locatie):
-        if self.active_client is None:
-            QtWidgets.QMessageBox.warning(self, "Selection Required",
-                                          "Please select or add a profile first!")
-            return
+        try:
+            # Obținem managerul prin gateway
+            manager_ev = self.gateway.jvm.ManagerEvents.getInstance()
 
-        self.booking_win = Ui_BookingApp(self.gateway, nume_locatie, self.active_client)
-        self.booking_win.exec_()
+            # Apelăm metoda care acum există în ManagerEvenimente
+            descriere = manager_ev.getDescriereLocatie(nume_locatie)
+
+            date_eveniment = {
+                'nume': nume_locatie,
+                'descriere': descriere,
+                'regiune': self.oras_actual,
+                'imagine': "resources/ev1.jpg"  # Sau logica ta de poze
+            }
+
+            self.detail_win = Ui_Event(self.gateway, date_eveniment, self.active_client)
+            self.detail_win.show()
+        except Exception as e:
+            print(f"Eroare Py4J: {e}")
 
     def selecteaza_oras(self):
         dialog = Ui_Filter(self)
@@ -91,10 +101,18 @@ class ExploreApp(Ui_Explore):
 
     def actualizeaza_locatii(self, judet_selectat):
         try:
-            while self.main_layout.count() > 6:
-                item = self.main_layout.takeAt(6)
-                if item.widget():
-                    item.widget().deleteLater()
+            self.oras_actual = judet_selectat
+
+            # CURĂȚARE SIGURĂ: Ștergem cardurile vechi fără să atingem layout-ul principal
+            # Presupunem că layout-ul ferestrei tale are o zonă unde pui cardurile.
+            # O metodă sigură este să iterăm invers
+            for i in reversed(range(self.main_layout.count())):
+                item = self.main_layout.itemAt(i)
+                widget = item.widget()
+                # Ștergem doar widget-urile de tip QFrame (cardurile noastre)
+                if isinstance(widget, QtWidgets.QFrame) and widget.objectName() == "EventCard":
+                    widget.setParent(None)
+                    widget.deleteLater()
 
             locatii = self.locatie_service.getLocatiiDupaJudet(judet_selectat)
 
@@ -112,6 +130,7 @@ class ExploreApp(Ui_Explore):
             "#701a75", "#86198f", "#1e3a8a", "#0f172a"
         ]
         card_frame = QtWidgets.QFrame()
+        card_frame.setObjectName("EventCard")
         card_frame.setMinimumHeight(250)
         card_frame.setStyleSheet(f"background-color: {random.choice(colors)}; border-radius: 40px;")
 
@@ -120,7 +139,7 @@ class ExploreApp(Ui_Explore):
         lbl_nume = QtWidgets.QLabel(nume_locatie)
         lbl_nume.setStyleSheet("color: white; font-size: 40px; font-weight: bold;")
 
-        btn_book = QtWidgets.QPushButton("Book Now")
+        btn_book = QtWidgets.QPushButton("Check Event")
         btn_book.setFixedSize(280, 50)
         btn_book.setStyleSheet("""
             QPushButton {
@@ -136,21 +155,13 @@ class ExploreApp(Ui_Explore):
                 background-color: #4d8a7f;  
             }
         """)
-        btn_book.clicked.connect(lambda: self.deschide_rezervare(nume_locatie))
-
+        btn_book.clicked.connect(lambda checked, name=nume_locatie: self.deschide_rezervare(name))
         layout.addWidget(lbl_nume)
         layout.addStretch()
         layout.addWidget(btn_book, 0, QtCore.Qt.AlignRight)
 
         return card_frame
 
-    def deschide_rezervare(self, nume_locatie):
-        if self.active_client is None:
-            QtWidgets.QMessageBox.warning(self, "Err", "No profile selected for booking")
-            return
-
-        self.booking_win = Ui_BookingApp(self.gateway, nume_locatie, self.active_client)
-        self.booking_win.exec_()
 
 class ProfileApp(Ui_OpenProfile):
     def __init__(self, gateway, manager, email, index=0):

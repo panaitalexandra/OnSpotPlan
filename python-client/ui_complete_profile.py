@@ -9,7 +9,7 @@ class Ui_CompleteProfile(BaseFramelessWindow):
 
     def setupUi(self):
         self.setObjectName("CompleteProfileWindow")
-        self.resize(1000, 1250)
+        self.resize(1200, 1300)
 
         self.content_widget = QtWidgets.QWidget()
         if hasattr(self, 'main_layout'):

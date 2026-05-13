@@ -8,7 +8,7 @@ class Ui_OpenProfile(BaseFramelessWindow):
 
     def setupUi(self):
         self.setObjectName("OpenProfileWindow")
-        self.resize(1000, 1350)
+        self.resize(1200, 1300)
 
         self.content_widget = QtWidgets.QWidget()
         self.content_widget.setStyleSheet("""
