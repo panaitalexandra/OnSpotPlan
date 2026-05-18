@@ -13,3 +13,14 @@ IN PROGRESS 4. db relationara
 5. cand cineva ceraza cont cu email deja inreg, mesaj succint registration failed. - tre mai mult
 
 6. editarea rezervarii unui eveniment, un profil poate lua un bilet
+
+7. trebuie modificata diagrama, gandita pentru preturi_bilete, rafcatorizate clasele bilet, evenimnet, manager event, programare si manager programare
+
+8. mesaj mai frumos ca pop up pt email si sau parola invalida
+ 9. mesaj mai fain pt cont creat cu succes
+
+10. gandit mai bine cu acele imagine ce si cum vin ele
+
+11 reoparat functionalitaea ferestrei de event
+
+12 actualizat partea de dupa book event

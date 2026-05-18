@@ -60,7 +60,7 @@ class BaseFramelessWindow(QtWidgets.QDialog):
         self.body_widget.setObjectName("body_widget")
         self.body_widget.setStyleSheet("""
             #body_widget {
-                background-color: #F7F7F7; 
+                background-color: #f3f4f6; 
                 border-bottom-left-radius: 20px;
                 border-bottom-right-radius: 20px;
             }

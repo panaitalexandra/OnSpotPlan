@@ -1,11 +1,12 @@
-import random
-
+# -*- coding: utf-8 -*-
 from PyQt5 import QtWidgets, QtCore
 from ui_explore import Ui_Explore
 from ui_filter import Ui_Filter
 from ui_open_profile import Ui_OpenProfile
 from ui_event import Ui_Event
-from ui_booking import Ui_BookingApp
+from ui_popup import Ui_Popup
+from ui_popup_question import Ui_PopupQuestion
+
 
 class ExploreApp(Ui_Explore):
     def __init__(self, gateway, manager, email):
@@ -14,32 +15,132 @@ class ExploreApp(Ui_Explore):
         self.manager = manager
         self.current_user_email = email
         self.active_client = None
-        self.locatie_service = self.gateway.entry_point.getLocatieService()
-        self.actualizeaza_locatii("Constanta")
-        self.btn_filters.clicked.connect(self.selecteaza_oras)
-        self.btn_profile.clicked.connect(self.deschide_profil)
+        self.update_categories()
+
+        self.btn_filters.clicked.connect(self.filter_city)
+        self.btn_profile.clicked.connect(self.open_profile)
         self.btn_logout.clicked.connect(self.handle_logout)
-        self.seteaza_profil_implicit()
 
-    def seteaza_profil_implicit(self):
+        self.lineEdit_search.textChanged.connect(self.update_search)
+
+        self.set_default_profile()
+
+        if "all events" in self.category_buttons:
+            self.category_buttons["all events"].clicked.connect(lambda: self.update_events("All Cities", "city"))
+        if "music" in self.category_buttons:
+            self.category_buttons["music"].clicked.connect(lambda: self.update_events("Music", "type"))
+        if "tech" in self.category_buttons:
+            self.category_buttons["tech"].clicked.connect(lambda: self.update_events("Tech", "type"))
+        if "food" in self.category_buttons:
+            self.category_buttons["food"].clicked.connect(lambda: self.update_events("Food", "type"))
+
+        self.update_events("All Cities", "city")
+
+    def update_categories(self):
         try:
-            manager_clienti = self.gateway.getManagerClienti(self.current_user_email)
-            lista_clienti = manager_clienti.getLista()
+            while self.cat_layout.count():
+                item = self.cat_layout.takeAt(0)
+                if item.widget():
+                    item.widget().deleteLater()
 
-            if not lista_clienti.isEmpty():
-                self.active_client = lista_clienti.get(0)
-                persoana = self.active_client.getPersoana()
+            self.category_buttons = {}
 
-                nume_complet = f"{persoana.getNume()} {persoana.getPrenume()}"
-                self.lbl_active_user.setText(f"Current Profile: {nume_complet}")
-                self.lbl_active_user.setStyleSheet("color: #38bdf8; font-weight: bold; font-size: 30px;")
-            else:
-                self.lbl_active_user.setText("No profile selected")
+            manager_ev = self.gateway.jvm.EventManager.getInstance()
+            events = manager_ev.getAllEvents()
+            categories = set()
+
+            for i in range(events.size()):
+                event_java = events.get(i)
+                if event_java.getType():
+                    categories.add(event_java.getType().strip().title())
+
+            category_list = sorted(list(categories))
+
+            btn_all = QtWidgets.QPushButton("All Events")
+            self.style_category_button(btn_all)
+            btn_all.clicked.connect(lambda: self.update_events("All Cities", "city"))
+            self.cat_layout.addWidget(btn_all)
+
+            visible = 3
+            visible_categories = category_list[:visible]
+            hidden_categories = category_list[visible:]
+
+            for cat in visible_categories:
+                btn = QtWidgets.QPushButton(cat)
+                self.style_category_button(btn)
+                btn.clicked.connect(lambda checked, c=cat: self.update_events(c, "type"))
+                self.cat_layout.addWidget(btn)
+
+            if hidden_categories:
+                btn_more = QtWidgets.QPushButton("More ▾")
+                self.style_category_button(btn_more)
+
+                more_menu = QtWidgets.QMenu(self)
+                more_menu.setStyleSheet("""
+                    QMenu {
+                        background-color: #1e293b;
+                        border: 2px solid #334155;
+                        border-radius: 15px;
+                        padding: 10px;
+                    }
+                    QMenu::item {
+                        color: #B7C8E1;
+                        font-size: 22px;
+                        padding: 15px 30px;
+                        background-color: transparent;
+                    }
+                    QMenu::item:selected {
+                        background-color: #3d7068;
+                        color: white;
+                        border-radius: 10px;
+                    }
+                """)
+
+                for hidden_cat in hidden_categories:
+                    action = more_menu.addAction(hidden_cat)
+                    action.triggered.connect(lambda checked, c=hidden_cat: self.update_events(c, "type"))
+
+                btn_more.setMenu(more_menu)
+                self.cat_layout.addWidget(btn_more)
+
+            self.cat_layout.addStretch()
 
         except Exception as e:
-            print(f"Err no profile selected: {e}")
+            self.popup = Ui_Popup(f"Error generating categories dynamically: {e}", title="Error")
+            self.popup.show()
 
-    def deschide_profil(self):
+    def style_category_button(self, button):
+        button.setMinimumHeight(70)
+        button.setCursor(QtCore.Qt.PointingHandCursor)
+        button.setStyleSheet("""
+            QPushButton {
+                background-color: white; color: #4b5563; 
+                border: 2px solid #d1d5db; border-radius: 35px; 
+                padding: 0 40px; font-size: 26px; font-weight: 600;
+            }
+            QPushButton:hover { background-color: #f1f5f9; color: #1e1b4b; border-color: #cbd5e1; }
+            QPushButton::menu-indicator { image: none; } 
+        """)
+
+    def set_default_profile(self):
+        try:
+            client_manager = self.gateway.getProfileManager(self.current_user_email)
+            client_list = client_manager.getProfileList()
+
+            if not client_list.isEmpty():
+                self.active_client = client_list.get(0)
+                p = self.active_client.getPerson()
+
+                full_name = f"{p.getLast_name()} {p.getFirst_name()}"
+                self.lbl_active_user.setText(f"Signed in as, {full_name}")
+                self.lbl_active_user.setStyleSheet("color: #1e1b4b; font-weight:500; font-size: 26px;")
+            else:
+                self.lbl_active_user.setText("No profile selected")
+        except Exception as e:
+            self.popup = Ui_Popup(f"Please select profile: {e}", title="Error")
+            self.popup.show()
+
+    def open_profile(self):
         try:
             from auth_01 import ProfileSelectionApp
             self.selection_win = ProfileSelectionApp(self.gateway, self.manager, self.current_user_email)
@@ -47,120 +148,181 @@ class ExploreApp(Ui_Explore):
             if self.selection_win.exec_() == QtWidgets.QDialog.Accepted:
                 if hasattr(self.selection_win, 'selected_client'):
                     self.active_client = self.selection_win.selected_client
-                    persoana = self.active_client.getPersoana()
+                    p = self.active_client.getPerson()
 
-                    nume_activ = f"{persoana.getNume()} {persoana.getPrenume()}"
-                    self.lbl_active_user.setText(f"Current Profile: {nume_activ}")
-                    self.lbl_active_user.setStyleSheet("color: #38bdf8; font-weight: bold; font-size: 30px;")
+                    active_name = f"{p.getLast_name()} {p.getFirst_name()}"
+                    self.lbl_active_user.setText(f"Signed in as, {active_name}")
         except Exception as e:
-            print(f"Err: {e}")
+            self.popup = Ui_Popup(f"Error: {e}", title="Error")
+            self.popup.show()
 
     def handle_logout(self):
-        # Cerem confirmare (Opțional, dar recomandat pentru UX)
-        reply = QtWidgets.QMessageBox.question(
-            self, 'Logout', "Are you sure you want to log out?",
-            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No
+        self.logout_popup = Ui_PopupQuestion(
+            "Are you sure you want to log out?",
+            title="Logout"
         )
-
-        if reply == QtWidgets.QMessageBox.Yes:
+        if self.logout_popup == QtWidgets.QMessageBox.Yes:
             from auth_01 import LoginApp
-
             self.login_win = LoginApp(self.gateway, self.manager)
-
             self.login_win.show()
-
             self.close()
 
-    def deschide_rezervare(self, nume_locatie):
+    def filter_city(self):
         try:
-            # Obținem managerul prin gateway
-            manager_ev = self.gateway.jvm.ManagerEvents.getInstance()
+            manager_ev = self.gateway.jvm.EventManager.getInstance()
+            event_list = manager_ev.getAllEvents()
+            unique_cities = set()
 
-            # Apelăm metoda care acum există în ManagerEvenimente
-            descriere = manager_ev.getDescriereLocatie(nume_locatie)
+            for i in range(event_list.size()):
+                event_java = event_list.get(i)
+                city_text = event_java.getCity()
+                if city_text:
+                    unique_cities.add(city_text.strip().title())
 
-            date_eveniment = {
-                'nume': nume_locatie,
-                'descriere': descriere,
-                'regiune': self.oras_actual,
-                'imagine': "resources/ev1.jpg"  # Sau logica ta de poze
-            }
+            dialog_city_list = ["All Cities"] + sorted(list(unique_cities))
 
-            self.detail_win = Ui_Event(self.gateway, date_eveniment, self.active_client)
-            self.detail_win.show()
+            dialog = Ui_Filter(self, orase_dinamice=dialog_city_list)
+            if dialog.exec_() == QtWidgets.QDialog.Accepted:
+                chosen_city = dialog.get_selection()
+                if chosen_city:
+                    self.update_events(chosen_city, "city")
         except Exception as e:
-            print(f"Eroare Py4J: {e}")
+            import traceback
+            traceback.print_exc()
+            self.popup = Ui_Popup(f"Could not load cities from DB: {e}", title="Filter Error")
+            self.popup.show()
+            dialog = Ui_Filter(self)
+            if dialog.exec_() == QtWidgets.QDialog.Accepted:
+                oras = dialog.get_selection()
+                if oras:
+                    self.update_events(oras, "type")
 
-    def selecteaza_oras(self):
-        dialog = Ui_Filter(self)
+    def update_search(self, text):
+        self.update_events(text, filter_type="search")
 
-        if dialog.exec_() == QtWidgets.QDialog.Accepted:
-            oras = dialog.get_selection()
-            if oras:
-                self.actualizeaza_locatii(oras)
-
-    def actualizeaza_locatii(self, judet_selectat):
+    def update_events(self, filter_value, filter_type="type"):
         try:
-            self.oras_actual = judet_selectat
+            while self.events_list_layout.count():
+                item = self.events_list_layout.takeAt(0)
+                if item.widget():
+                    item.widget().deleteLater()
 
-            # CURĂȚARE SIGURĂ: Ștergem cardurile vechi fără să atingem layout-ul principal
-            # Presupunem că layout-ul ferestrei tale are o zonă unde pui cardurile.
-            # O metodă sigură este să iterăm invers
-            for i in reversed(range(self.main_layout.count())):
-                item = self.main_layout.itemAt(i)
-                widget = item.widget()
-                # Ștergem doar widget-urile de tip QFrame (cardurile noastre)
-                if isinstance(widget, QtWidgets.QFrame) and widget.objectName() == "EventCard":
-                    widget.setParent(None)
-                    widget.deleteLater()
+            manager_ev = self.gateway.jvm.EventManager.getInstance()
+            event_list = manager_ev.getAllEvents()
 
-            locatii = self.locatie_service.getLocatiiDupaJudet(judet_selectat)
+            displayed_card_count = 0
 
-            for nume in locatii:
-                card = self.creeaza_widget_card(nume)
-                self.main_layout.addWidget(card)
+            for i in range(event_list.size()):
+                event_java = event_list.get(i)
+                show_event = False
+
+                if filter_value == "All" or filter_value == "All Cities":
+                    show_event = True
+
+                elif filter_type == "city":
+                    if event_java.getCity() and filter_value.lower() == event_java.getCity().lower():
+                        show_event = True
+
+                elif filter_type == "type":
+                    if event_java.getType() and filter_value.lower() == event_java.getType().lower():
+                        show_event = True
+
+                elif filter_type == "search":
+                    if not filter_value.strip():
+                        show_event = True
+                    else:
+                        search_term = filter_value.lower()
+                        in_name = search_term in event_java.getName().lower() if event_java.getName() else False
+                        in_location = search_term in event_java.getLocation().lower() if event_java.getLocation() else False
+                        in_description = search_term in event_java.getDescription().lower() if event_java.getDescription() else False
+                        if in_name or in_location or in_description:
+                            show_event = True
+
+                if show_event:
+                    card = self.create_real_card_widget(event_java, displayed_card_count)
+                    self.events_list_layout.addWidget(card)
+                    displayed_card_count += 1
 
         except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Eroare", f"Could not load locations: {e}")
+            import traceback
+            traceback.print_exc()
+            self.popup = Ui_Popup(f"Could not load events: {e}", title="Error")
+            self.popup.show()
 
-    def creeaza_widget_card(self, nume_locatie):
+    def update_locations(self, selected_county):
+        self.update_events(selected_county, "city")
 
-        colors = [
-            "#1e1b4b", "#312e81", "#4338ca", "#581c87",
-            "#701a75", "#86198f", "#1e3a8a", "#0f172a"
-        ]
+    def create_real_card_widget(self, event_java, card_index):
         card_frame = QtWidgets.QFrame()
         card_frame.setObjectName("EventCard")
-        card_frame.setMinimumHeight(250)
-        card_frame.setStyleSheet(f"background-color: {random.choice(colors)}; border-radius: 40px;")
+        card_frame.setMinimumHeight(300)
+
+        bg_color = "#f1f5f9" if card_index % 2 == 0 else "#f3f4f6"
+
+        card_frame.setStyleSheet(f"""
+            #EventCard {{
+                background-color: {bg_color};
+                border-radius: 40px;
+                border: 1px solid #cbd5e1;
+            }}
+        """)
 
         layout = QtWidgets.QVBoxLayout(card_frame)
+        layout.setContentsMargins(30, 30, 30, 30)
 
-        lbl_nume = QtWidgets.QLabel(nume_locatie)
-        lbl_nume.setStyleSheet("color: white; font-size: 40px; font-weight: bold;")
-
-        btn_book = QtWidgets.QPushButton("Check Event")
-        btn_book.setFixedSize(280, 50)
-        btn_book.setStyleSheet("""
-            QPushButton {
-                background-color: #3d7068; 
-                color: white; 
-                font-size: 22px;             
-                font-weight: bold;
-                border-radius: 25px;         
-                border: none;
-                padding: 5px 15px;
-            }
-            QPushButton:hover {
-                background-color: #4d8a7f;  
-            }
+        lbl_name = QtWidgets.QLabel(event_java.getName())
+        lbl_name.setStyleSheet("""
+            background-color: transparent; 
+            color: #0B1C30; 
+            font-family: 'Montserrat', 'Inter', 'Segoe UI', sans-serif;
+            font-size: 38px; 
+            font-weight: 500; 
+            letter-spacing: -0.5px;
         """)
-        btn_book.clicked.connect(lambda checked, name=nume_locatie: self.deschide_rezervare(name))
-        layout.addWidget(lbl_nume)
+
+        info_text = f"""
+        <p style='line-height: 150%; margin: 0;'>
+            📍 {event_java.getLocation()}<br>
+            📅 {event_java.getDateTime()}
+        </p>
+        """
+        lbl_info = QtWidgets.QLabel()
+        lbl_info.setText(info_text)
+        lbl_info.setStyleSheet("""
+            background-color: transparent; 
+            color: #213145; 
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            font-size: 26px; 
+            font-weight: 300;
+        """)
+
+        btn_view = QtWidgets.QPushButton("View Details")
+        btn_view.setFixedSize(350, 70)
+        btn_view.setStyleSheet("""
+            QPushButton {
+                background-color: #1e1b4b; 
+                color: #EAF1FF; 
+                font-family: 'Inter', 'Segoe UI', sans-serif;
+                font-size: 26px; 
+                font-weight: 500; 
+                border-radius: 20px;
+            }
+            QPushButton:hover { background-color: #2e2a70; }
+        """)
+
+        btn_view.clicked.connect(lambda checked, ev=event_java: self.open_event_details(ev))
+        btn_view.setCursor(QtCore.Qt.PointingHandCursor)
+
+        layout.addWidget(lbl_name)
+        layout.addWidget(lbl_info)
         layout.addStretch()
-        layout.addWidget(btn_book, 0, QtCore.Qt.AlignRight)
+        layout.addWidget(btn_view, 0, QtCore.Qt.AlignRight)
 
         return card_frame
+
+    def open_event_details(self, event_java):
+        self.detail_win = Ui_Event(self.gateway, event_java, self.active_client, self.current_user_email)
+        self.detail_win.show()
 
 
 class ProfileApp(Ui_OpenProfile):
@@ -170,55 +332,52 @@ class ProfileApp(Ui_OpenProfile):
         self.manager = manager
         self.current_user_email = email
         self.profile_index = index
-        self.incarca_date_profil()
+        self.load_profile_data()
 
-        self.btn_modify.clicked.connect(self.deschide_modificare)
+        self.btn_modify.clicked.connect(self.open_edit_profile)
         self.btn_back_explore.clicked.connect(self.close)
         if hasattr(self, 'btn_back_explore'):
             self.btn_close.clicked.connect(self.close)
 
-    def incarca_date_profil(self):
+    def load_profile_data(self):
         try:
-            manager = self.gateway.getManagerClienti(self.current_user_email)
-            lista = manager.getLista()
+            client_manager = self.gateway.getProfileManager(self.current_user_email)
+            client_list = client_manager.getProfileList()
 
-            if not lista.isEmpty() and self.profile_index < lista.size():
-                profil = lista.get(self.profile_index)
-                p = profil.getPersoana()
+            if not client_list.isEmpty() and self.profile_index < client_list.size():
+                profile_obj = client_list.get(self.profile_index)
+                p = profile_obj.getPerson()
 
-                self.info_labels["Full Name"].setText(f"{p.getNume()} {p.getPrenume()}")
+                self.info_labels["Full Name"].setText(f"{p.getLast_name()} {p.getFirst_name()}")
 
                 if "CNP" in self.info_labels:
-                    self.info_labels["CNP"].setText(p.getCNP())
+                    self.info_labels["CNP"].setText(p.getNationalId())
 
-                self.info_labels["Phone Number"].setText(p.getTelefon())
-
+                self.info_labels["Phone Number"].setText(p.getPhone_number())
                 self.info_labels["Region"].setText(p.getRegion())
 
                 if "City" in self.info_labels:
-                    self.info_labels["City"].setText(p.getLocalitate())
+                    self.info_labels["City"].setText(p.getCity())
 
         except Exception as e:
-            print(f"Err could not upload: {e}")
+            self.popup = Ui_Popup(f"Err could not upload profile data: {e}", title="Error")
+            self.popup.show()
 
-    def deschide_modificare(self):
+    def open_edit_profile(self):
         from auth_01 import CompleteProfileApp
-
         self.edit_win = CompleteProfileApp(
             self.gateway,
             self.manager,
             self.current_user_email,
             profile_index=self.profile_index
         )
-
         if self.edit_win.exec_() == QtWidgets.QDialog.Accepted:
-            self.incarca_date_profil()
+            self.load_profile_data()
 
     def handle_select(self):
         selected_row = self.table.currentRow()
-
         if selected_row == -1:
-            QtWidgets.QMessageBox.warning(self, "Selection", "Select profile from tabel!")
+            self.popup = Ui_Popup("Select profile from table!", title="Selection")
+            self.popup.show()
             return
-
         self.accept()

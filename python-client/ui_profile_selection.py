@@ -13,27 +13,26 @@ class Ui_ProfileSelection(BaseFramelessWindow):
 
         # Widget-ul de conținut (cel care va sta sub bara de titlu)
         self.content_widget = QtWidgets.QWidget()
-        # Aplicăm tema dark pe acest widget pentru a acoperi fundalul alb default al body-ului
         self.content_widget.setStyleSheet("""
             QWidget {
-                background-color: #0f172a; 
+                background-color: #FFFFFF; 
                 border-bottom-left-radius: 20px;
                 border-bottom-right-radius: 20px;
             }
             * {
                 font-family: 'Segoe UI', sans-serif;
-                color: #f8fafc;
+                color: #1e1b4b;
             }
             QPushButton#BackBtn {
                 background-color: transparent;
-                color: #94a3b8;
+                color: #1e1b4b;
                 font-size: 26px;
                 text-decoration: underline;
                 border: none;
                 margin-top: 10px;
             }
             QPushButton#BackBtn:hover {
-                color: #38bdf8;
+                color: #2e2a70;
             }
         """)
 
@@ -48,7 +47,7 @@ class Ui_ProfileSelection(BaseFramelessWindow):
         self.label_title.setStyleSheet("""
             font-size: 48px; 
             font-weight: 850; 
-            color: #38bdf8; 
+            color: #1e1b4b; 
             letter-spacing: 2px;
             background: transparent;
             border: none;
@@ -67,34 +66,35 @@ class Ui_ProfileSelection(BaseFramelessWindow):
 
         self.table.setStyleSheet("""
             QTableWidget {
-                background-color: #1e293b;
-                alternate-background-color: #334155;
-                border: 2px solid #475569;
+                background-color: #f3f4f6; 
+                alternate-background-color: #FFFFFF; 
+                border: 2px solid #f3f4f6;
                 border-radius: 20px;
-                font-size: 22px;
+                font-size: 26px; 
                 padding: 10px;
-                selection-background-color: #3d7068;
+                selection-background-color: #1e1b4b;
+                selection-color: #FFFFFF;
             }
             QHeaderView::section {
-                background-color: #1e293b;
-                color: #38bdf8;
+                background-color: #f3f4f6; 
+                color: #1e1b4b;
                 padding: 15px;
                 font-weight: bold;
-                font-size: 18px;
+                font-size: 22px; 
                 border: none;
-                border-bottom: 3px solid #38bdf8;
+                border-bottom: 3px solid #1e1b4b;
                 text-transform: uppercase;
             }
             QPushButton#BackBtn {
-            background-color: transparent;
-            color: #94a3b8;
-            font-size: 24px;
-            text-decoration: underline;
-            border: none;
-        }
-        QPushButton#BackBtn:hover {
-            color: #38bdf8;
-        }
+                background-color: transparent;
+                color: #1e1b4b;
+                font-size: 24px;
+                text-decoration: underline;
+                border: none;
+            }
+            QPushButton#BackBtn:hover {
+                color: #2e2a70;
+            }
         """)
 
         self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
@@ -103,49 +103,50 @@ class Ui_ProfileSelection(BaseFramelessWindow):
         self.btn_layout = QtWidgets.QHBoxLayout()
         self.btn_layout.setSpacing(20)
 
+        # AICI AM MĂRIT DIMENSIUNILE ȘI FONTUL BUTOANELOR
         button_style = """
             QPushButton {
-                font-size: 18px;
+                font-size: 24px;          /* Mărit de la 18px pentru lizibilitate premium */
                 font-weight: bold;
-                border-radius: 15px;
-                padding: 15px 25px;
-                min-width: 180px;
+                border-radius: 18px;      /* Rotunjire adaptată la noua mărime */
+                padding: 18px 32px;       /* Padding mărit pentru butoane mai înalte */
+                min-width: 220px;         /* Lățime minimă extinsă de la 180px */
             }
         """
 
         self.btn_add = QtWidgets.QPushButton("＋ Add Profile")
         self.btn_add.setStyleSheet(button_style + """
-            QPushButton { background-color: #1e1b4b; border: 2px solid #4338ca; color: white; }
-            QPushButton:hover { background-color: #312e81; border: 2px solid #38bdf8; }
+            QPushButton { background-color: #f3f4f6; border: 2px solid #cbd5e1; color: #1e1b4b; }
+            QPushButton:hover { background-color: #f1f5f9; border-color: #1e1b4b; }
         """)
 
         self.btn_delete = QtWidgets.QPushButton("Delete Profile")
         self.btn_delete.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_delete.setStyleSheet(button_style + """
                     QPushButton { 
-                        background-color: #7f1d1d; 
-                        color: white; 
-                        border: 2px solid #b91c1c; 
+                        background-color: #f3f4f6; 
+                        color: #b91c1c; 
+                        border: 2px solid #cbd5e1; 
                     }
-                    QPushButton:hover { background-color: #b91c1c; }
+                    QPushButton:hover { background-color: #f1f5f9; border: 2px solid #b91c1c; }
                 """)
 
         self.btn_view = QtWidgets.QPushButton("View Details")
         self.btn_view.setStyleSheet(button_style + """
-            QPushButton { background-color: #1e1b4b; border: 2px solid #4338ca; color: white; }
-            QPushButton:hover { background-color: #312e81; border: 2px solid #38bdf8; }
+            QPushButton { background-color: #f3f4f6; border: 2px solid #cbd5e1; color: #1e1b4b; }
+            QPushButton:hover { background-color: #f1f5f9; border-color: #1e1b4b;   }
         """)
 
         self.btn_select = QtWidgets.QPushButton("SELECT PROFILE")
         self.btn_select.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_select.setStyleSheet(button_style + """
             QPushButton { 
-                background-color: #3d7068; 
+                background-color: #1e1b4b; 
                 color: white; 
                 border: none;
                 letter-spacing: 1.5px;
             }
-            QPushButton:hover { background-color: #4d8a7f; }
+            QPushButton:hover { background-color: #2e2a70; }
         """)
 
         self.btn_layout.addWidget(self.btn_add)
@@ -159,13 +160,36 @@ class Ui_ProfileSelection(BaseFramelessWindow):
         self.btn_back = QtWidgets.QPushButton("Back to Explore")
         self.btn_back.setObjectName("BackBtn")
         self.btn_back.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.btn_back.clicked.connect(self.reject)  # Reject închide dialogul
+        self.btn_back.clicked.connect(self.reject)
 
-        self.back_btn_layout.addStretch()
-        self.back_btn_layout.addWidget(self.btn_back)
-        self.back_btn_layout.addStretch()
+        # 1. Inițializarea butonului
+        self.btn_back = QtWidgets.QPushButton("Back to Explore")
+        self.btn_back.setObjectName("BackBtn")
+        self.btn_back.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_back.clicked.connect(self.reject)
 
-        self.layout.addLayout(self.back_btn_layout)
+        # 2. Stilul premium complet adaptat paletei tale de culori
+        self.btn_back.setStyleSheet("""
+                QPushButton#BackBtn {
+                    background-color: #f3f4f6;       /* Fundal alb-murdar / gri discret */
+                    color: #1e1b4b;                  /* Textul cu acel albastru închis regal */
+                    font-size: 24px;
+                    font-weight: bold;
+                    border: 2px solid #cbd5e1;       /* Margine fină, curată */
+                    border-radius: 18px;             /* Rotunjire modernă identică cu butoanele de sus */
+                    padding: 18px 0px;               /* Înalt și confortabil la apăsare */
+                    text-decoration: none;           /* Am eliminat complet acel underline învechit */
+                }
+                QPushButton#BackBtn:hover {
+                    background-color: #f1f5f9;       /* Culoarea de hover solicitată de tine */
+                    border-color: #1e1b4b;           /* La hover, marginea se aprinde subtil în culoarea brandului */
+                }
+            """)
+
+        # 3. Adăugarea direct în layout-ul principal vertical
+        # Fiind adăugat direct în self.layout (fără stretch-uri stânga/dreapta),
+        # se va întinde automat pe toată lățimea ferestrei tale (respectând marginile de siguranță de 50px).
+        self.layout.addWidget(self.btn_back)
 
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)

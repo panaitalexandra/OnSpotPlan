@@ -131,6 +131,7 @@ class Ui_Authentification(BaseFramelessWindow):
                                             "    background-color: #2e2a70;\n"
                                             "}")
         self.pushButton_login.setObjectName("pushButton_login")
+        self.pushButton_login.setCursor(QtCore.Qt.PointingHandCursor)
         self.footer_layout.addWidget(self.pushButton_login)
 
         self.label_signin = QtWidgets.QLabel(self.frame)

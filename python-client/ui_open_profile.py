@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui, QtWidgets
 from ui_base_window import BaseFramelessWindow
 
@@ -8,12 +9,13 @@ class Ui_OpenProfile(BaseFramelessWindow):
 
     def setupUi(self):
         self.setObjectName("OpenProfileWindow")
-        self.resize(1200, 1300)
+        self.resize(1300, 1300)
 
         self.content_widget = QtWidgets.QWidget()
+        # Trecem fundalul principal al ferestrei pe alb curat
         self.content_widget.setStyleSheet("""
             QWidget { 
-                background-color: #121212; 
+                background-color: #FFFFFF; 
                 border-bottom-left-radius: 20px; 
                 border-bottom-right-radius: 20px; 
             }
@@ -26,23 +28,31 @@ class Ui_OpenProfile(BaseFramelessWindow):
         self.verticalLayout_root.setContentsMargins(40, 40, 40, 40)
 
         self.frame = QtWidgets.QFrame(self.content_widget)
-        self.frame.setStyleSheet("background-color: white; border-radius: 40px;")
+        # Folosim ID selector pentru card ca să nu propage stilul către elementele din interior
+        self.frame.setObjectName("ProfileCard")
+        self.frame.setStyleSheet("""
+            #ProfileCard {
+                background-color: #f3f4f6; 
+                border: 2px solid #cbd5e1;
+                border-radius: 32px;
+            }
+        """)
         self.layout_card = QtWidgets.QVBoxLayout(self.frame)
         self.layout_card.setContentsMargins(60, 60, 60, 60)
         self.layout_card.setSpacing(30)
 
         self.label_title = QtWidgets.QLabel("Profile Details")
         self.label_title.setStyleSheet("""
-            font-size: 75px; 
+            font-size: 50px; 
             font-weight: bold; 
             color: #1e1b4b; 
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             background: transparent;
         """)
         self.layout_card.addWidget(self.label_title)
 
         self.info_labels = {}
-        fields = ["Full Name", "CNP", "Phone Number", "Region", "City"]
+        fields = ["Full Name", "National ID", "Phone Number", "Region", "City"]
 
         for field in fields:
             lbl_title = QtWidgets.QLabel(field)
@@ -50,18 +60,19 @@ class Ui_OpenProfile(BaseFramelessWindow):
                 font-size: 20px; 
                 font-weight: bold; 
                 color: #94a3b8; 
-                margin-top: 10px;
+                margin-top: 5px;
                 background: transparent;
             """)
             self.layout_card.addWidget(lbl_title)
 
             lbl_value = QtWidgets.QLabel("Not provided")
+            # Am ajustat bordura de jos la #cbd5e1 pentru a se demarca frumos pe cardul gri
             lbl_value.setStyleSheet("""
                 font-size: 28px; 
                 font-weight: 500;
                 color: #1e1b4b; 
                 padding: 10px 0px; 
-                border-bottom: 2px solid #f1f5f9;
+                border-bottom: 2px solid #cbd5e1;
                 background: transparent;
             """)
             self.layout_card.addWidget(lbl_value)
@@ -71,32 +82,38 @@ class Ui_OpenProfile(BaseFramelessWindow):
         self.layout_card.addStretch()
 
         self.btn_modify = QtWidgets.QPushButton("Modify Profile Details")
-        self.btn_modify.setMinimumHeight(110)
+        self.btn_modify.setMinimumHeight(90)
         self.btn_modify.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_modify.setStyleSheet("""
             QPushButton { 
                 background-color: #1e1b4b; 
                 color: white; 
-                font-size: 34px; 
-                font-weight: bold; 
+                font-size: 32px; 
+                font-weight: 500; 
                 border-radius: 25px; 
             } 
             QPushButton:hover { background-color: #2e2a70; }
         """)
         self.layout_card.addWidget(self.btn_modify)
 
+        # Stilul premium reactualizat pentru BackBtn: ocupă toată lățimea, fundal alb curat, fără underline
         self.btn_back_explore = QtWidgets.QPushButton("Back to Explore")
         self.btn_back_explore.setMinimumHeight(90)
         self.btn_back_explore.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_back_explore.setStyleSheet("""
             QPushButton { 
-                background-color: transparent; 
-                color: #64748b; 
+                background-color: #FFFFFF; 
+                color: #1e1b4b; 
                 font-size: 28px; 
-                text-decoration: underline; 
-                border: none;
+                font-weight: 500; 
+                border: 2px solid #cbd5e1;
+                border-radius: 25px;
+                text-decoration: none;
             } 
-            QPushButton:hover { color: #1e1b4b; }
+            QPushButton:hover { 
+                background-color: #f1f5f9; 
+                border-color: #1e1b4b; 
+            }
         """)
         self.layout_card.addWidget(self.btn_back_explore)
 

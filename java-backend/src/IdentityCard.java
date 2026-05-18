@@ -3,25 +3,17 @@
  * @author Panait Claudia-Alexandra
  */
 public class IdentityCard {
-    private String CNP, series, number, region, city;
-    public IdentityCard(String cnp, String series, String numar, String region, String city){
-        this.CNP = cnp;
-        this.series = series;
-        this.number = numar;
+    private String national_id, region, city;
+    public IdentityCard(String national_id, String region, String city){
+        this.national_id = national_id;
         this.region = region;
         this.city = city;
     }
-    public IdentityCard(String cnp){
-        this.CNP = cnp;
+    public IdentityCard(String national_id){
+        this.national_id = national_id;
     }
-    public String getCnp(){
-        return this.CNP;
-    }
-    public String getSeries(){
-        return this.series;
-    }
-    public String getNumber(){
-        return this.number;
+    public String getNationalId(){
+        return this.national_id;
     }
     public String getRegion(){
         return this.region;

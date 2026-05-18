@@ -141,6 +141,7 @@ class Ui_Register(BaseFramelessWindow):
                                             "    background-color: #2e2a70;\n"
                                             "}")
         self.pushButton_register.setObjectName("pushButton_register")
+        self.pushButton_register.setCursor(QtCore.Qt.PointingHandCursor)
         self.footer_layout.addWidget(self.pushButton_register)
 
         self.label_back_to_login = QtWidgets.QLabel(self.frame)

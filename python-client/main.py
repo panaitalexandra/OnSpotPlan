@@ -8,7 +8,7 @@ if __name__ == "__main__":
     app.setQuitOnLastWindowClosed(True)
     try:
         gateway = JavaGateway()
-        java_manager = gateway.entry_point.getManagerUtilizatori()
+        java_manager = gateway.entry_point.getUserManager()
 
         login = LoginApp(gateway, java_manager)
         login.show()

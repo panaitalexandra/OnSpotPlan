@@ -5,19 +5,26 @@
 import py4j.GatewayServer;
 
 public class Gateway {
-    public ManagerUtilizatori getManagerUtilizatori() {
-        return ManagerUtilizatori.getInstance();
+    public UserManager getUserManager() {
+        return UserManager.getInstance();
     }
-    public ManagerClienti getManagerClienti(String userId) {
-        return ManagerClienti.getInstance(userId);
+    public ProfileManager getProfileManager(String email) {
+        int userId = UserManager.getInstance().getIdByEmail(email);
+        return ProfileManager.getInstance(userId);
     }
-    public EventService getLocatieService() {
+    public EventService getEventService() {
         return EventService.getInstance();
+    }
+    public EventManager getEventManager() {
+        return EventManager.getInstance();
+    }
+    public BookingManager getBookingManager(int userId) {
+        return BookingManager.getInstance(userId);
     }
     public static void main(String[] args) {
         GatewayServer server = new GatewayServer(new Gateway());
         server.start();
-        System.out.println("Java server is ON. Run Python!");
+        System.out.println("Java is on - run py!");
     }
 }
 
