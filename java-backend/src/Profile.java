@@ -5,27 +5,18 @@
 import java.time.*;
 
 public class Profile {
-    private int varsta;
+    private int age;
     private Person p;
 
-    public Profile(String last_name, String first_name, String id, String phone){
-        p = new Person(last_name, first_name, id, phone);
-        this.varsta = checkAge(id);
-    }
     public Profile(String last_name, String first_name, String id, String phone, String region, String city) {
         this.p = new Person(last_name, first_name, id, region, city, phone);
-        this.varsta = checkAge(id);
-    }
-    public Person getPerson(){
-        p.setIdentity_card(p.getIdentity_card());
-        return p;
+        this.age = checkAge(id);
     }
 
     int checkAge(String cnp) {
-        if(cnp == null || cnp.length() != 13){
-            System.out.println("Invalid ID");
+        if(cnp == null || cnp.length() != 13)
             return -1;
-        }
+
         try {
             char sex = cnp.charAt(0);
             int an = Integer.parseInt(cnp.substring(1, 3));
@@ -40,18 +31,17 @@ public class Profile {
             LocalDate dataNastere = LocalDate.of(anNastere, luna, zi);
             return Period.between(dataNastere, LocalDate.now()).getYears();
         }catch (IllegalArgumentException e) {
-            System.out.println("Eroare" + e.getMessage());
             return -1;
         }
     }
-
-    public int getVarsta() {
-        return varsta;
+    public Person getPerson(){
+        p.setIdentity_card(p.getIdentity_card());
+        return p;
     }
-
-    public String getPhone_number() {
-        return p.getPhone_number();
+    public int getAge() {
+        return age;
     }
+    public String getPhone_number() { return p.getPhone_number(); }
 
     @Override
     public boolean equals(Object o) {

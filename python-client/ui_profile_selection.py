@@ -11,7 +11,6 @@ class Ui_ProfileSelection(BaseFramelessWindow):
         self.setObjectName("ProfileSelectionWindow")
         self.resize(1200, 1300)
 
-        # Widget-ul de conținut (cel care va sta sub bara de titlu)
         self.content_widget = QtWidgets.QWidget()
         self.content_widget.setStyleSheet("""
             QWidget {
@@ -103,7 +102,6 @@ class Ui_ProfileSelection(BaseFramelessWindow):
         self.btn_layout = QtWidgets.QHBoxLayout()
         self.btn_layout.setSpacing(20)
 
-        # AICI AM MĂRIT DIMENSIUNILE ȘI FONTUL BUTOANELOR
         button_style = """
             QPushButton {
                 font-size: 24px;          /* Mărit de la 18px pentru lizibilitate premium */
@@ -162,13 +160,11 @@ class Ui_ProfileSelection(BaseFramelessWindow):
         self.btn_back.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_back.clicked.connect(self.reject)
 
-        # 1. Inițializarea butonului
         self.btn_back = QtWidgets.QPushButton("Back to Explore")
         self.btn_back.setObjectName("BackBtn")
         self.btn_back.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_back.clicked.connect(self.reject)
 
-        # 2. Stilul premium complet adaptat paletei tale de culori
         self.btn_back.setStyleSheet("""
                 QPushButton#BackBtn {
                     background-color: #f3f4f6;       /* Fundal alb-murdar / gri discret */
@@ -186,11 +182,7 @@ class Ui_ProfileSelection(BaseFramelessWindow):
                 }
             """)
 
-        # 3. Adăugarea direct în layout-ul principal vertical
-        # Fiind adăugat direct în self.layout (fără stretch-uri stânga/dreapta),
-        # se va întinde automat pe toată lățimea ferestrei tale (respectând marginile de siguranță de 50px).
         self.layout.addWidget(self.btn_back)
-
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
 

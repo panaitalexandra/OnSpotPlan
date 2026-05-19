@@ -8,7 +8,6 @@ class Ui_Filter(BaseFramelessWindow):
         super().__init__()
         self.setFixedSize(1300, 1300)
         self.selected_city = None
-        # Schimbat fallback-ul în "All" pentru a se potrivi perfect cu logica din explore_02.py
         self.orase_de_afisat = orase_dinamice if orase_dinamice else ["All"]
         self.setupUi()
 
@@ -16,7 +15,6 @@ class Ui_Filter(BaseFramelessWindow):
         self.setObjectName("FilterWindow")
 
         self.content_widget = QtWidgets.QWidget()
-        # Trecem fundalul principal pe alb curat și setăm culoarea textului implicită
         self.content_widget.setStyleSheet("""
             QWidget { 
                 background-color: #FFFFFF; 
@@ -34,7 +32,6 @@ class Ui_Filter(BaseFramelessWindow):
                 background: transparent;
                 margin-bottom: 10px;
             }
-            /* Celulele orașelor devin alb-murdar cu margini fine */
             QPushButton#CityCell {
                 background-color: #f3f4f6;
                 color: #1e1b4b;
@@ -48,13 +45,11 @@ class Ui_Filter(BaseFramelessWindow):
                 background-color: #f1f5f9;
                 border: 2px solid #1e1b4b;
             }
-            /* Când un oraș este selectat, celula devine albastru închis cu text alb */
             QPushButton#CityCell:checked {
                 background-color: #1e1b4b;
                 border: 2px solid #1e1b4b;
                 color: #1e1b4b;
             }
-            /* Butonul de confirmare principal primește culoarea plină de brand */
             QPushButton#ConfirmBtn { 
                 background-color: #1e1b4b; 
                 color: white; 
@@ -68,7 +63,6 @@ class Ui_Filter(BaseFramelessWindow):
             QPushButton#ConfirmBtn:hover { 
                 background-color: #2e2a70; 
             }
-            /* Butonul Back stilizat premium: lat, fără linie dedesubt și cu fundal reactiv */
             QPushButton#BackBtn {
                 background-color: #f3f4f6;
                 color: #1e1b4b;
@@ -97,7 +91,6 @@ class Ui_Filter(BaseFramelessWindow):
         self.filter_layout.addWidget(self.label)
 
         self.grid_widget = QtWidgets.QWidget()
-        # Ne asigurăm că grid-ul este transparent pentru a lăsa fundalul alb să se vadă curat
         self.grid_widget.setStyleSheet("background: transparent;")
         self.grid_layout = QtWidgets.QGridLayout(self.grid_widget)
         self.grid_layout.setSpacing(15)

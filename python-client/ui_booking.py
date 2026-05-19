@@ -280,10 +280,6 @@ class Ui_BookingApp(BaseFramelessWindow):
 
     def handle_booking(self):
         selected_item = self.list_slots.currentItem()
-        # if not selected_item or selected_item.text() == "No slots available for this date":
-        #     self.popup = Ui_Popup("Please select a valid time slot!", title="Selection Error")
-        #     self.popup.show()
-        #     return
 
         try:
             q_date = self.calendar.selectedDate()
@@ -312,20 +308,34 @@ class Ui_BookingApp(BaseFramelessWindow):
             manager_prog = self.gateway.jvm.BookingManager.getInstance(user_id)
 
             if manager_prog.addBooking(new_booking):
-                self.close()
+                self.hide()
 
                 self.success_screen = Ui_EventBook(
                     self.gateway, self.event_java, self.active_client,
                     self.categorie_selectata, self.user_email
                 )
                 self.success_screen.show()
+                self.close()
+
         except Exception as e:
             traceback.print_exc()
             err_msg = str(e)
-            if "DUPLICATE_BOOKING" in err_msg:
-                self.popup = Ui_Popup("This profile has already booked a ticket for this specific event session!",
-                                        title="Already Booked")
-                self.popup.show()
+
+            if hasattr(e, 'java_exception') and e.java_exception is not None:
+                display_text = e.java_exception.getMessage()
             else:
-                self.popup = Ui_Popup(f"An error occurred: {e}", title="System Error")
-                self.popup.show()
+                display_text = err_msg
+
+            if "DUPLICATE_BOOKING" in display_text or "already booked" in display_text.lower():
+                self.popup = Ui_Popup(
+                    "This profile holder has already booked a ticket for this specific event session!",
+                    title="Already Booked",
+                    parent=self
+                )
+            else:
+                self.popup = Ui_Popup(
+                    f"An error occurred while confirming your booking:\n{display_text}",
+                    title="System Error",
+                    parent=self
+                )
+            self.popup.exec_()

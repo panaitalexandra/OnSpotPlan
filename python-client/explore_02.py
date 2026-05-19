@@ -143,15 +143,12 @@ class ExploreApp(Ui_Explore):
     def open_profile(self):
         try:
             from auth_01 import ProfileSelectionApp
+
             self.selection_win = ProfileSelectionApp(self.gateway, self.manager, self.current_user_email)
+            self.selection_win.explore_parent = self
+            self.selection_win.show()
+            self.hide()
 
-            if self.selection_win.exec_() == QtWidgets.QDialog.Accepted:
-                if hasattr(self.selection_win, 'selected_client'):
-                    self.active_client = self.selection_win.selected_client
-                    p = self.active_client.getPerson()
-
-                    active_name = f"{p.getLast_name()} {p.getFirst_name()}"
-                    self.lbl_active_user.setText(f"Signed in as, {active_name}")
         except Exception as e:
             self.popup = Ui_Popup(f"Error: {e}", title="Error")
             self.popup.show()
@@ -161,7 +158,10 @@ class ExploreApp(Ui_Explore):
             "Are you sure you want to log out?",
             title="Logout"
         )
-        if self.logout_popup == QtWidgets.QMessageBox.Yes:
+        if hasattr(self.logout_popup, 'btn_confirm'):
+            self.logout_popup.btn_confirm.setText("Yes, Log Out")
+
+        if self.logout_popup.exec_() == QtWidgets.QDialog.Accepted:
             from auth_01 import LoginApp
             self.login_win = LoginApp(self.gateway, self.manager)
             self.login_win.show()
@@ -332,12 +332,14 @@ class ProfileApp(Ui_OpenProfile):
         self.manager = manager
         self.current_user_email = email
         self.profile_index = index
+        self.explore_parent = None
         self.load_profile_data()
 
         self.btn_modify.clicked.connect(self.open_edit_profile)
-        self.btn_back_explore.clicked.connect(self.close)
-        if hasattr(self, 'btn_back_explore'):
-            self.btn_close.clicked.connect(self.close)
+        self.btn_back_explore.clicked.connect(self.handle_back_to_explore)
+
+        if hasattr(self, 'btn_close'):
+            self.btn_close.clicked.connect(self.handle_back_to_explore)
 
     def load_profile_data(self):
         try:
@@ -350,8 +352,8 @@ class ProfileApp(Ui_OpenProfile):
 
                 self.info_labels["Full Name"].setText(f"{p.getLast_name()} {p.getFirst_name()}")
 
-                if "CNP" in self.info_labels:
-                    self.info_labels["CNP"].setText(p.getNationalId())
+                if "National ID" in self.info_labels:
+                    self.info_labels["National ID"].setText(p.getNationalId())
 
                 self.info_labels["Phone Number"].setText(p.getPhone_number())
                 self.info_labels["Region"].setText(p.getRegion())
@@ -374,10 +376,5 @@ class ProfileApp(Ui_OpenProfile):
         if self.edit_win.exec_() == QtWidgets.QDialog.Accepted:
             self.load_profile_data()
 
-    def handle_select(self):
-        selected_row = self.table.currentRow()
-        if selected_row == -1:
-            self.popup = Ui_Popup("Select profile from table!", title="Selection")
-            self.popup.show()
-            return
-        self.accept()
+    def handle_back_to_explore(self):
+        self.close()

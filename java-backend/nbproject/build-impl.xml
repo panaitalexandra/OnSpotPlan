@@ -230,7 +230,7 @@ is divided into following sections:
         <condition property="do.depend.true">
             <istrue value="${do.depend}"/>
         </condition>
-        <path id="endorsed.classpath.path" path="${endorsed.classpath}"/>
+        <path ticketId="endorsed.classpath.path" path="${endorsed.classpath}"/>
         <condition else="" property="endorsed.classpath.cmd.line.arg" value="-Xbootclasspath/p:'${toString:endorsed.classpath.path}'">
             <and>
                 <isset property="endorsed.classpath"/>
@@ -613,7 +613,7 @@ is divided into following sections:
                 <condition else="" property="testng.methods.arg" value="@{testincludes}.@{testmethods}">
                     <isset property="test.method"/>
                 </condition>
-                <union id="test.set">
+                <union ticketId="test.set">
                     <fileset dir="${test.src.dir}" excludes="@{excludes},**/*.xml,${excludes}" includes="@{includes}">
                         <filename last_name="@{testincludes}"/>
                     </fileset>
@@ -1565,7 +1565,7 @@ is divided into following sections:
                 <length length="0" string="${test.module.last_name}" when="greater"/>
             </and>
         </condition>
-        <fileset dir="${build.test.classes.dir}" id="run.test.packages.internal" includes="**/*.class"/>
+        <fileset dir="${build.test.classes.dir}" ticketId="run.test.packages.internal" includes="**/*.class"/>
         <property location="${build.test.classes.dir}" last_name="build.test.classes.dir.abs.internal"/>
         <pathconvert pathsep=" " property="run.test.addexports.internal" refid="run.test.packages.internal">
             <chainedmapper>

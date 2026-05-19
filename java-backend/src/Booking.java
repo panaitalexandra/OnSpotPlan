@@ -23,15 +23,6 @@ public class Booking {
     public TicketCategories getCategory() { return category; }
     public LocalDate getDate() { return date; }
     public LocalTime getTime() { return time; }
-
     public String getEvenimentNume() { return event.getName(); }
-
-//    @Override
-//    public String toString() {
-//        return "Rezervare Eveniment: " + getEvenimentNume() +
-//                "\nParticipant: " + profile.getPerson().getLast_name() + " " + profile.getPerson().getFirst_name() +
-//                "\nData: " + data + " la ora " + ora +
-//                "\nCategorie Ticket: " + categorieAleasa.getTipBilet() + " (" + categorieAleasa.getPrice() + " RON)";
-//    }
 }
 

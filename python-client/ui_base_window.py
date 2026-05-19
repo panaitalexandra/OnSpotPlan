@@ -6,18 +6,15 @@ class BaseFramelessWindow(QtWidgets.QDialog):
 
     def __init__(self):
         super().__init__()
-        # 1. Configurări de bază pentru transparență și margini
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.resize(1000, 1200) # O dimensiune default mai rezonabilă
+        self.resize(1000, 1200)
 
-        # 2. Layout-ul principal (Master)
         self.master_layout = QtWidgets.QVBoxLayout(self)
         self.master_layout.setContentsMargins(0, 0, 0, 0)
         self.master_layout.setSpacing(0)
         self.master_layout.setSpacing(0)
 
-        # --- 3. BARA DE TITLU (Sus) ---
         self.title_bar = QtWidgets.QWidget()
         self.title_bar.setFixedHeight(60)
         self.title_bar.setStyleSheet("""
@@ -52,10 +49,8 @@ class BaseFramelessWindow(QtWidgets.QDialog):
         self.title_layout.addStretch()
         self.title_layout.addWidget(self.btn_close)
 
-        # Adăugăm BARA prima (va fi sus)
         self.master_layout.addWidget(self.title_bar)
 
-        # --- 4. CORPUL FERESTREI (Restul spațiului) ---
         self.body_widget = QtWidgets.QWidget()
         self.body_widget.setObjectName("body_widget")
         self.body_widget.setStyleSheet("""
@@ -66,18 +61,14 @@ class BaseFramelessWindow(QtWidgets.QDialog):
             }
         """)
 
-        # Acesta este layout-ul unde se vor injecta paginile (Login, Register etc.)
         self.main_layout = QtWidgets.QVBoxLayout(self.body_widget)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setSpacing(0)
 
-        # Adăugăm CORPUL al doilea (va fi sub bară)
         self.master_layout.addWidget(self.body_widget)
 
-        # 5. Conectare evenimente
         self.btn_close.clicked.connect(QtWidgets.QApplication.instance().quit)
 
-    # Logica pentru mutarea ferestrei (Drag and Drop)
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
             self.old_pos = event.globalPos()

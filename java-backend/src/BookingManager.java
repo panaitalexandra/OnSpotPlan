@@ -104,7 +104,7 @@ public class BookingManager {
 
                 pstmtR.setInt(1, idProfil);
                 pstmtR.setInt(2, idBiletGenerat);
-                pstmtR.setInt(3, b.getCategory().getId());
+                pstmtR.setInt(3, b.getCategory().getTicketId());
                 pstmtR.setString(4, "CONF-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
 
                 pstmtR.executeUpdate();
@@ -126,7 +126,7 @@ public class BookingManager {
 //
 //            int idProfil = getIdProfile(p.getProfile().getPerson().getNationalId());
 //
-//            pstmt.setInt(1, p.getCategory().getId()); // ID-ul categoriei biletului
+//            pstmt.setInt(1, p.getCategory().getTicketId()); // ID-ul categoriei biletului
 //            pstmt.setInt(2, idProfil);                       // ID-ul profilului din DB
 //
 //            if (pstmt.executeUpdate() > 0) {

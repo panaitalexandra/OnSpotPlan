@@ -1,22 +1,22 @@
 import java.io.Serializable;
 
 public class TicketCategories implements Serializable {
-    private int id; // Corespunde cu 'id' din tabela 'categorie_bilete'
-    private String tipBilet; // VIP, Standard, etc.
-    private double pret;
+    private int ticketId;
+    private String ticketCategory;
+    private double ticketPrice;
 
-    public TicketCategories(int id, String tipBilet, double pret) {
-        this.id = id;
-        this.tipBilet = tipBilet;
-        this.pret = pret;
+    public TicketCategories(int ticketId, String ticketCategory, double ticketPrice) {
+        this.ticketId = ticketId;
+        this.ticketCategory = ticketCategory;
+        this.ticketPrice = ticketPrice;
     }
 
-    public int getId() { return id; }
-    public String getTicketType() { return tipBilet; }
-    public double getPrice() { return pret; }
+    public int getTicketId() { return ticketId; }
+    public String getTicketType() { return ticketCategory; }
+    public double getPrice() { return ticketPrice; }
 
     @Override
     public String toString() {
-        return tipBilet + " - " + pret + " RON";
+        return ticketCategory + " - " + ticketPrice + " RON";
     }
 }

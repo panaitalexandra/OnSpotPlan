@@ -39,28 +39,11 @@ public class User {
     public String getEmail() {
         return p.getEmail();
     }
-    public String getParola() {
+    public String getPassword() {
         return p.getPassword();
     }
     public Person getPerson() {
         return this.p;
     }
-//    @Override
-//    public String toString() {
-//        if (p.getLast_name() == null || p.getLast_name().isEmpty())
-//            return String.join("|", p.getEmail(), p.getPassword());
-//        else
-//        {
-//            return String.join("|",
-//                p.getLast_name(),
-//                p.getFirst_name(),
-//                p.getNationalId(),
-//                p.getRegion(),
-//                p.getCity(),
-//                p.getPhone_number(),
-//                p.getEmail(),
-//                p.getPassword()
-//            );
-//        }
-//    }
+
 }

@@ -84,13 +84,7 @@ class Ui_Explore(BaseFramelessWindow):
         self.main_layout.addLayout(self.header_layout)
         self.lbl_active_user = QtWidgets.QLabel("Current Profile: None")
         self.lbl_active_user.setObjectName("lbl_active_user")
-        # self.lbl_active_user.setStyleSheet("""
-        #             color: #1e1b4b;
-        #             font-size: 26px;
-        #             font-weight: 400;
-        #             margin-top: 5px;
-        #             margin-left: 5px;
-        #         """)
+
         self.main_layout.addWidget(self.lbl_active_user)
         self.lineEdit_search = QtWidgets.QLineEdit()
         self.lineEdit_search.setPlaceholderText("Search events, organizers, or cities...")
@@ -141,13 +135,11 @@ class Ui_Explore(BaseFramelessWindow):
         self.rec_header.addStretch()
         self.main_layout.addLayout(self.rec_header)
 
-        # Containerul dedicat listei de evenimente
         self.events_list_container = QtWidgets.QWidget()
         self.events_list_layout = QtWidgets.QVBoxLayout(self.events_list_container)
         self.events_list_layout.setSpacing(20)
         self.events_list_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Adăugăm lista în structura principală
         self.main_layout.addWidget(self.events_list_container)
         self.main_layout.addStretch()
 

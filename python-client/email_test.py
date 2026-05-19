@@ -11,8 +11,7 @@ try:
         "password": parola
     })
 
-    print("✅ SUCCES! Verifică-ți Inbox-ul (sau folderul Spam).")
-    print("Ar trebui să primești un mail de la 'noreply@mail.supabase.co'.")
+    print("done")
 
 except Exception as e:
     print(f"❌ Eroare la trimitere: {e}")

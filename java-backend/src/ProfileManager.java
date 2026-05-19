@@ -8,7 +8,7 @@ import java.util.*;
 public class ProfileManager {
     private ArrayList<Profile> profiles;
     private int userId;
-    private static Map<Integer, ProfileManager> instante = new HashMap<>();
+    private static Map<Integer, ProfileManager> instances = new HashMap<>();
 
     private ProfileManager(int userId) {
         profiles = new ArrayList<>();
@@ -39,12 +39,18 @@ public class ProfileManager {
         }
     }
 
-    public boolean addProfile(Profile c) {
+    public boolean addProfile(Profile c) throws Exception {
         Person p = c.getPerson();
 
         if (!isPhoneValid(p.getPhone_number())) {
-            throw new RuntimeException("INVALID_PHONE");
+            throw new RuntimeException("The entered phone number is invalid. It must be between 7 and 15 digits long and can include optional spaces, dashes, or a '+' prefix.");
         }
+        if (p.getNationalId() == null || p.getNationalId().trim().isEmpty())
+            throw new Exception("The National ID field cannot be empty. Please provide a valid identification document number.");
+        String id = p.getNationalId().trim();
+        if (!id.matches("^[a-zA-Z0-9]{5,20}$"))
+            throw new Exception("The National ID format is invalid. It must be between 5 and 20 characters long and contain only letters and numbers (no special characters or spaces).");
+
         String sql = "INSERT INTO profil (id_utilizator, nume, prenume, cnp, regiune, oras, telefon) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -63,9 +69,9 @@ public class ProfileManager {
         } catch (SQLException e) {
             e.printStackTrace();
             if ("23505".equals(e.getSQLState())) {
-                throw new RuntimeException("CNP_DUPLICATE");
+                throw new Exception("This National ID is already registered to another profile in our database.");
             }
-            return false;
+            throw new Exception("A database error occurred while trying to save the profile: " + e.getMessage());
         }
     }
     public boolean deleteProfile(int index) {
@@ -88,15 +94,20 @@ public class ProfileManager {
         }
         return false;
     }
-    public boolean updateProfile(int index, Profile profileNou) {
+    public boolean updateProfile(int index, Profile profileNou) throws Exception {
         if (index >= 0 && index < profiles.size()) {
             Person p = profileNou.getPerson();
 
             if (!isPhoneValid(p.getPhone_number())) {
-                throw new RuntimeException("INVALID_PHONE");
+                throw new Exception("The entered phone number is invalid. It must be between 7 and 15 digits long and can include optional spaces, dashes, or a '+' prefix.");
             }
+            if (p.getNationalId() == null || p.getNationalId().trim().isEmpty())
+                throw new Exception("The National ID field cannot be empty. Please provide a valid identification document number.");
+            String id = p.getNationalId().trim();
+            if (!id.matches("^[a-zA-Z0-9]{5,20}$"))
+                throw new Exception("The National ID format is invalid. It must be between 5 and 20 characters long and contain only letters and numbers (no special characters or spaces).");
 
-            Profile profileVechi = profiles.get(index);
+            Profile oldProfile = profiles.get(index);
 
             String sql = "UPDATE profil SET nume=?, prenume=?, cnp=?, regiune=?, oras=?, telefon=? " +
                     "WHERE id_utilizator = ? AND cnp = ?";
@@ -112,7 +123,7 @@ public class ProfileManager {
                 pstmt.setString(6, p.getPhone_number());
 
                 pstmt.setInt(7, this.userId);
-                pstmt.setString(8, profileVechi.getPerson().getNationalId());
+                pstmt.setString(8, oldProfile.getPerson().getNationalId());
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
@@ -121,9 +132,9 @@ public class ProfileManager {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-                if ("23505".equals(e.getSQLState())) {
-                    throw new RuntimeException("CNP_DUPLICATE");
-                }
+                if ("23505".equals(e.getSQLState()))
+                    throw new Exception("This National ID is already registered to another profile in our database.");
+                throw new Exception("A database error occurred while trying to update the profile: " + e.getMessage());
             }
         }
         return false;
@@ -138,9 +149,9 @@ public class ProfileManager {
         return curatat.matches("^\\+?\\d{7,15}$");
     }
     public static ProfileManager getInstance(int userId) {
-        if (!instante.containsKey(userId)) {
-            instante.put(userId, new ProfileManager(userId));
+        if (!instances.containsKey(userId)) {
+            instances.put(userId, new ProfileManager(userId));
         }
-        return instante.get(userId);
+        return instances.get(userId);
     }
 }

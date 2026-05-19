@@ -115,7 +115,7 @@ class Ui_Register(BaseFramelessWindow):
         }
 
         for hint in self.password_hints.values():
-            hint.setStyleSheet("color: #94a3b8; font-size: 18px;")  # Gri inițial
+            hint.setStyleSheet("color: #94a3b8; font-size: 18px;")
             self.hints_layout.addWidget(hint)
 
         self.verticalLayout.addLayout(self.input_Layout)

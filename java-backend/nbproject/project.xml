@@ -5,10 +5,10 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <last_name>E- ProgramareVaccinare</last_name>
             <source-roots>
-                <root id="src.dir"/>
+                <root ticketId="src.dir"/>
             </source-roots>
             <test-roots>
-                <root id="test.src.dir"/>
+                <root ticketId="test.src.dir"/>
             </test-roots>
         </data>
     </configuration>

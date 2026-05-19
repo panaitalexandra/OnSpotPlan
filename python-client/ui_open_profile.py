@@ -12,7 +12,6 @@ class Ui_OpenProfile(BaseFramelessWindow):
         self.resize(1300, 1300)
 
         self.content_widget = QtWidgets.QWidget()
-        # Trecem fundalul principal al ferestrei pe alb curat
         self.content_widget.setStyleSheet("""
             QWidget { 
                 background-color: #FFFFFF; 
@@ -28,7 +27,6 @@ class Ui_OpenProfile(BaseFramelessWindow):
         self.verticalLayout_root.setContentsMargins(40, 40, 40, 40)
 
         self.frame = QtWidgets.QFrame(self.content_widget)
-        # Folosim ID selector pentru card ca să nu propage stilul către elementele din interior
         self.frame.setObjectName("ProfileCard")
         self.frame.setStyleSheet("""
             #ProfileCard {
@@ -66,7 +64,6 @@ class Ui_OpenProfile(BaseFramelessWindow):
             self.layout_card.addWidget(lbl_title)
 
             lbl_value = QtWidgets.QLabel("Not provided")
-            # Am ajustat bordura de jos la #cbd5e1 pentru a se demarca frumos pe cardul gri
             lbl_value.setStyleSheet("""
                 font-size: 28px; 
                 font-weight: 500;
@@ -96,8 +93,7 @@ class Ui_OpenProfile(BaseFramelessWindow):
         """)
         self.layout_card.addWidget(self.btn_modify)
 
-        # Stilul premium reactualizat pentru BackBtn: ocupă toată lățimea, fundal alb curat, fără underline
-        self.btn_back_explore = QtWidgets.QPushButton("Back to Explore")
+        self.btn_back_explore = QtWidgets.QPushButton("Back to Profiles")
         self.btn_back_explore.setMinimumHeight(90)
         self.btn_back_explore.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_back_explore.setStyleSheet("""

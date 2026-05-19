@@ -13,7 +13,6 @@ class Ui_CompleteProfile(BaseFramelessWindow):
         self.resize(1300, 1300)
 
         self.content_widget = QtWidgets.QWidget()
-        # Setează fundalul principal al ferestrei pe alb curat
         self.content_widget.setStyleSheet("""
             QWidget {
                 background-color: #FFFFFF;
@@ -33,7 +32,6 @@ class Ui_CompleteProfile(BaseFramelessWindow):
         self.verticalLayout_main.setContentsMargins(50, 40, 50, 40)
 
         self.frame = QtWidgets.QFrame(self.content_widget)
-        # Setează un ID unic pentru card ca să aplicăm corect fundalul gri fără efect de cascadă
         self.frame.setObjectName("CompleteProfileCard")
         self.frame.setStyleSheet("""
             #CompleteProfileCard {
@@ -79,7 +77,6 @@ class Ui_CompleteProfile(BaseFramelessWindow):
             line_edit = QtWidgets.QLineEdit()
             line_edit.setPlaceholderText(placeholder)
             line_edit.setMinimumHeight(65)
-            # Câmpurile primesc fundal alb curat pentru a face contrast premium cu fundalul gri al cardului
             line_edit.setStyleSheet("""
                 QLineEdit {
                     background-color: #FFFFFF; 
@@ -101,7 +98,6 @@ class Ui_CompleteProfile(BaseFramelessWindow):
 
         self.layout.addStretch()
 
-        # Butonul principal plin (Save and Continue)
         self.btn_complete = QtWidgets.QPushButton("Save and Continue")
         self.btn_complete.setMinimumHeight(85)
         self.btn_complete.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -118,7 +114,6 @@ class Ui_CompleteProfile(BaseFramelessWindow):
             }
         """)
 
-        # Butonul secundar mare (Skip for now) - stilizat în ton cu ferestrele anterioare
         self.btn_skip = QtWidgets.QPushButton("Skip for now")
         self.btn_skip.setMinimumHeight(85)
         self.btn_skip.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))

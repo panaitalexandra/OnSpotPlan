@@ -149,22 +149,21 @@ class Ui_Event(BaseFramelessWindow):
             QComboBox {
                 background-color: #f3f4f6; 
                 border: 2px solid #cbd5e1; 
-                border-radius: 20px; /* Margini mai rotunjite și elegante */
+                border-radius: 20px; 
                 padding: 10px 25px; 
-                font-size: 26px; /* Font mărit pentru a se asorta cu titlurile mari */
+                font-size: 26px;
                 font-weight: 500;
                 color: #1e1b4b;
             }
             QComboBox:hover { 
                 border: 2px solid #1e1b4b; 
-                background-color: #f8fafc; /* Schimbare discretă de fundal la hover */
+                background-color: #f8fafc;
             }
             QComboBox::drop-down { 
                 border: none; 
                 width: 60px;
             }
 
-            /* Fereastra Dropdown care se deschide (Meniul cu opțiuni) */
             QAbstractItemView { 
                 background-color: #FFFFFF; 
                 color: #1e1b4b; 
@@ -174,12 +173,12 @@ class Ui_Event(BaseFramelessWindow):
                 font-weight: 400;
                 selection-background-color: #1e1b4b; 
                 selection-color: #FFFFFF; 
-                outline: 0px; /* Elimină chenarul punctat inestetic de focus din Qt */
+                outline: 0px;
             }
 
             QAbstractItemView::item { 
-                padding: 22px 25px; /* Padding generos pe verticală pentru linii înalte și aerisite */
-                border-bottom: 1px solid #e2e8f0; /* Linie fină despărțitoare între categorii */
+                padding: 22px 25px; 
+                border-bottom: 1px solid #e2e8f0;
                 background-color: #FFFFFF;
             }
 

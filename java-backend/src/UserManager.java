@@ -7,7 +7,7 @@ import java.util.*;
 
 public class UserManager {
     private ArrayList<User> users;
-    private static UserManager instanta;
+    private static UserManager instance;
 
     private UserManager() {
         users = new ArrayList<>();
@@ -46,7 +46,7 @@ public class UserManager {
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, userNou.getEmail());
-            pstmt.setString(2, userNou.getParola());
+            pstmt.setString(2, userNou.getPassword());
 
             pstmt.executeUpdate();
 
@@ -58,7 +58,7 @@ public class UserManager {
             }
 
         } catch (SQLException e) {
-            System.err.println("Could not save userr: " + e.getMessage());
+            System.err.println("Could not save user: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -81,28 +81,47 @@ public class UserManager {
                 PasswordValidation.containsSpecial(parola);
     }
 
-    public User storeUser(String email, String parola) {
-        if (!isEmailValid(email)) return null;
-        if (isEmailRegistered(email)) return null;
-        if (!isPasswordValid(parola)) return null;
+    public User storeUser(String email, String parola) throws Exception {
+        if (!isEmailValid(email)) {
+            throw new Exception("INVALID_EMAIL_FORMAT");
+        }
+        if (isEmailRegistered(email)) {
+            throw new Exception("EMAIL_ALREADY_EXISTS");
+        }
+        if (!isPasswordValid(parola)) {
+            throw new Exception("WEAK_PASSWORD");
+        }
 
-        var user = new User(email, parola);
+        User user = new User(email, parola);
         saveUser(user);
         users.add(user);
         return user;
     }
-    
-    public User getUser(String email, String parola){
-        for(User user: users)
-            if(user.authentificate(email, parola))
-                return user;
-        return null;
+
+    public User getUser(String email, String password) throws Exception {
+
+        User user = findUserByEmail(email);
+        if (user == null) {
+            throw new Exception("EMAIL_NOT_FOUND");
+        }
+
+        if (!user.getPassword().equals(password)) {
+            throw new Exception("INCORRECT_PASSWORD");
+        }
+
+        return user;
     }
 
-    
+    public User findUserByEmail(String email) {
+        if (email == null) return null;
+        for (User u : users)
+            if (u.getEmail().equalsIgnoreCase(email.trim()))
+                return u;
+        return null;
+    }
     public static UserManager getInstance(){
-        if(instanta == null)
-            instanta = new UserManager();
-        return instanta;
+        if(instance == null)
+            instance = new UserManager();
+        return instance;
     }
 }

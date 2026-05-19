@@ -38,44 +38,50 @@ class RegisterApp(Ui_Register):
                 label.setText(label.text().replace("✔", "●"))
 
     def handle_signup(self):
-        email = self.lineEdit_email.text()
+        email = self.lineEdit_email.text().strip()
         password = self.lineEdit_passwd.text()
         confirmation = self.lineEdit_confirm_passwd.text()
 
+        if not email or not password or not confirmation:
+            self.popup = Ui_Popup("Please fill in all fields!", title="Error", parent=self)
+            self.popup.exec_()
+            return
+
         if password != confirmation:
-            self.popup = Ui_Popup("Passwords do not match!", title="Error")
-            self.popup.show()
+            self.popup = Ui_Popup("Passwords do not match!", title="Error", parent=self)
+            self.popup.exec_()
             return
 
         try:
-            if not self.manager.isEmailValid(email):
-                self.popup = Ui_Popup("Invalid email format!", title="Error")
-                self.popup.show()
-                return
-
-            if not self.manager.isPasswordValid(password):
-                self.popup = Ui_Popup("Password does not meet security requirements!", title="Error")
-                self.popup.show()
-                return
-
-            new_user = self.manager.saveUser(email, password)
+            new_user = self.manager.storeUser(email, password)
 
             if new_user is not None:
-                self.popup = Ui_Popup("Account created successfully!", title="Success")
-                self.popup.show()
+                self.popup = Ui_Popup("Account created successfully!", title="Success", parent=self)
+                self.popup.exec_()
+
                 self.complete_win = CompleteProfileApp(self.gateway, self.manager, email)
                 if self.complete_win.exec_() == QtWidgets.QDialog.Accepted:
                     from explore_02 import ExploreApp
                     self.dashboard = ExploreApp(self.gateway, self.manager, email)
                     self.dashboard.show()
                     self.accept()
-                else:
-                    self.popup = Ui_Popup("Registration failed!", title="Error")
-                    self.popup.show()
+            else:
+                self.popup = Ui_Popup("Registration failed. Please try again.", title="Error", parent=self)
+                self.popup.exec_()
 
         except Exception as e:
-            self.popup = Ui_Popup(f"Details: {e}", title="Communication Error")
-            self.popup.show()
+            error_message = str(e)
+            if "INVALID_EMAIL_FORMAT" in error_message:
+                display_text = "The email address format is invalid. Please enter a valid email."
+            elif "EMAIL_ALREADY_EXISTS" in error_message:
+                display_text = "This email address is already registered to another account."
+            elif "WEAK_PASSWORD" in error_message:
+                display_text = "The password does not meet the security requirements (must include uppercase letters, numbers, and special characters)."
+            else:
+                display_text = f"Registration error: {error_message}"
+
+            self.popup = Ui_Popup(display_text, title="Registration Failed", parent=self)
+            self.popup.exec_()
 
     def switch_to_login(self, event):
         self.login_window = LoginApp(self.gateway, self.manager)
@@ -95,6 +101,12 @@ class LoginApp(Ui_Authentification):
         email = self.lineEdit_email.text()
         password = self.lineEdit_passwd.text()
 
+
+        if not email or not password:
+            self.popup = Ui_Popup("Please fill in all fields!", title="Error", parent=self)
+            self.popup.exec_()
+            return
+
         try:
             user = self.manager.getUser(email, password)
 
@@ -103,12 +115,19 @@ class LoginApp(Ui_Authentification):
                 self.dashboard = ExploreApp(self.gateway, self.manager, email)
                 self.dashboard.show()
                 self.accept()
-            else:
-                self.popup = Ui_Popup("Invalid email or password!", title="Error")
-                self.popup.show()
+
         except Exception as e:
-            self.popup = Ui_Popup(f"Java communication failed: {e}", title="Error")
-            self.popup.show()
+            error_message = str(e)
+
+            if "EMAIL_NOT_FOUND" in error_message:
+                display_text = "This email address was not found in our system."
+            elif "INCORRECT_PASSWORD" in error_message:
+                display_text = "The password you entered is incorrect. Please try again."
+            else:
+                display_text = f"Authentication failed: {error_message}"
+
+            self.popup = Ui_Popup(display_text, title="Login Failed", parent=self)
+            self.popup.exec_()
 
     def switch_to_signup(self, event):
         self.signup_window = RegisterApp(self.gateway, self.manager)
@@ -128,21 +147,55 @@ class ProfileSelectionApp(Ui_ProfileSelection):
         self.btn_view.clicked.connect(self.handle_view_details)
         self.btn_select.clicked.connect(self.handle_select)
 
+        if hasattr(self, 'btn_back_explore'):
+            self.btn_back_explore.clicked.connect(self.handle_back_to_explore)
+        elif hasattr(self, 'btn_back'):  # Alternativa 1
+            self.btn_back.clicked.connect(self.handle_back_to_explore)
+        elif hasattr(self, 'btn_close'):  # Alternativa 2
+            self.btn_close.clicked.connect(self.handle_back_to_explore)
+
         self.load_profiles()
 
     def handle_select(self):
         selected_row = self.table.currentRow()
         if selected_row == -1:
-            self.popup = Ui_Popup("Choose a profile!", title="Selection")
-            self.popup.show()
+            self.popup = Ui_Popup("Choose a profile!", title="Selection", parent=self)
+            self.popup.exec_()
             return
 
-        manager = self.gateway.getProfileManager(self.current_user_email)
-        list = manager.getProfileList()
+        try:
+            manager_profil = self.gateway.getProfileManager(self.current_user_email)
+            profile_list = manager_profil.getProfileList()
+            selected_profile = profile_list.get(selected_row)
 
-        self.selected_client = list.get(selected_row)
+            if hasattr(self, 'explore_parent') and self.explore_parent is not None:
+                self.explore_parent.active_client = selected_profile
+                self.explore_parent.set_default_profile()
+                self.explore_parent.show()
+            else:
+                from explore_02 import ExploreApp
+                self.explore_win = ExploreApp(self.gateway, self.manager, self.current_user_email)
+                self.explore_win.active_client = selected_profile
+                self.explore_win.set_default_profile()
+                self.explore_win.show()
 
-        self.accept()
+            self.close()
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self.popup = Ui_Popup(f"Error switching profile: {e}", title="Error", parent=self)
+            self.popup.exec_()
+
+    def handle_back_to_explore(self):
+        try:
+            from explore_02 import ExploreApp
+            self.explore_win = ExploreApp(self.gateway, self.manager, self.current_user_email)
+            self.explore_win.show()
+            self.close()
+        except Exception as e:
+            self.popup = Ui_Popup(f"Error returning to Explore: {e}", title="Error")
+            self.popup.exec_()
 
     def load_profiles(self):
         manager = self.gateway.getProfileManager(self.current_user_email)
@@ -199,6 +252,7 @@ class ProfileSelectionApp(Ui_ProfileSelection):
             except Exception as e:
                 self.popup = Ui_Popup(f"Java error: {e}", title="System Error")
                 self.popup.show()
+
     def handle_view_details(self):
         selected_row = self.table.currentRow()
         if selected_row == -1:
@@ -263,29 +317,30 @@ class CompleteProfileApp(Ui_CompleteProfile):
             data = {k: v.text().strip() for k, v in self.inputs.items()}
 
             if not all(data.values()):
-                self.popup = Ui_Popup("All fields must be completed!", title="Error")
-                self.popup.show()
+                self.popup = Ui_Popup("All fields must be completed!", title="Error", parent=self)
+                self.popup.exec_()
                 return
 
-            if len(data["CNP"]) != 13 or not data["CNP"].isdigit():
-                self.popup = Ui_Popup("National id", title="Error")
-                self.popup.show()
+            cnp_key = "National ID" if "National ID" in data else "CNP"
+            cnp_text = data[cnp_key].strip()
+
+            if len(cnp_text) < 5 or len(cnp_text) > 20 or not cnp_text.isalnum():
+                self.popup = Ui_Popup(
+                    "The National ID format is invalid. It must be between 5 and 20 characters long and contain only alphanumeric characters.",
+                    title="Invalid ID",
+                    parent=self
+                )
+                self.popup.exec_()
                 return
 
-            client_java = self.gateway.jvm.Client(
+            client_java = self.gateway.jvm.Profile(
                 data["Last Name"],
                 data["First Name"],
-                data["National ID"],
+                data[cnp_key],
                 data["Phone Number"],
                 data["Region"],
                 data["City"]
             )
-
-            age = client_java.getAge()
-            if age < 0:
-                self.popup = Ui_Popup("ageee", title="Error")
-                self.popup.show()
-                return
 
             profile_manager = self.gateway.getProfileManager(self.current_user_email)
             if self.profile_index is not None:
@@ -296,26 +351,40 @@ class CompleteProfileApp(Ui_CompleteProfile):
             if success:
                 self.accept()
             else:
-                self.popup = Ui_Popup("Could not save data", title="Error")
-                self.popup.show()
+                self.popup = Ui_Popup(
+                    "The profile could not be saved. Please verify your information and try again.",
+                    title="Save Failed",
+                    parent=self
+                )
+                self.popup.exec_()
 
         except Exception as e:
-            err_msg = str(e)
-            if "CNP_DUPLICATE" in err_msg:
-                self.popup = Ui_Popup(
-                    "This National ID is already registered in the database for another profile!",
-                    title="Duplicate National ID"
-                )
-                self.popup.show()
-            elif "INVALID_PHONE" in err_msg:
-                self.popup = Ui_Popup(
-                    "The entered phone number is invalid!\nIt must be 10 digits long and start with 07, 02, or 03.",
-                    title="Invalid Phone Number"
-                )
-                self.popup.show()
+            import traceback
+            print("--- DETALII EROARE ÎN CONSOLĂ ---")
+            traceback.print_exc()
+
+            if hasattr(e, 'java_exception') and e.java_exception is not None:
+                display_text = e.java_exception.getMessage()
             else:
-                self.popup = Ui_Popup(f"Err compatibilitye: {err_msg}", title="Crash")
-                self.popup.show()
+                err_msg = str(e)
+                display_text = err_msg.split(":", 1)[1].strip() if ":" in err_msg else err_msg
+
+            if not display_text or any(x in str(e).lower() for x in ["javapackage", "py4jerror"]) and not hasattr(e,
+                                                                                                                  'java_exception'):
+                display_text = "A communication error occurred with the database. Please make sure the input data format is acceptable."
+                title_text = "System Error"
+            else:
+                if "already registered" in display_text.lower():
+                    title_text = "Duplicate Profile"
+                elif "phone number" in display_text.lower():
+                    title_text = "Invalid Phone"
+                elif "national id" in display_text.lower() or "cnp" in display_text.lower():
+                    title_text = "Invalid ID"
+                else:
+                    title_text = "Validation Error"
+
+            self.popup = Ui_Popup(display_text, title=title_text, parent=self)
+            self.popup.exec_()
 
     def handle_skip(self):
         self.open_explore()

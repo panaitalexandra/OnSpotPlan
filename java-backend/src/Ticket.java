@@ -5,17 +5,17 @@
 import java.io.Serializable;
 
 public class Ticket implements Serializable {
-    private int idBilet;
-    private String serie;
-    private int numar;
+    private int ticketId;
+    private String ticketSeries;
+    private int ticketNumber;
 
-    public Ticket(int idBilet, String serie, int numar) {
-        this.idBilet = idBilet;
-        this.serie = serie;
-        this.numar = numar;
+    public Ticket(int ticketId, String TicketSeries, int TicketNumber) {
+        this.ticketId = ticketId;
+        this.ticketSeries = TicketSeries;
+        this.ticketNumber = TicketNumber;
     }
 
-    public int getIdBilet() { return idBilet; }
-    public String getSerie() { return serie; }
-    public int getNumar() { return numar; }
+    public int getTicketId() { return ticketId; }
+    public String getTicketSeries() { return ticketSeries; }
+    public int getTicketNumber() { return ticketNumber; }
 }
