@@ -1,13 +1,12 @@
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class EventManager {
-    private List<Event> eventsList;
+    private Map<String, Event> events;
     private static EventManager instance;
 
     private EventManager() {
-        eventsList = new ArrayList<>();
+        events = new HashMap<>();
         loadEvents();
     }
 
@@ -18,9 +17,9 @@ public class EventManager {
                 "JOIN oras o ON l.id_oras = o.id_oras " +
                 "JOIN data_calendaristica d ON e.id_data = d.id_data";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql)) {
+        try (Connection conn = DatabaseConnectionSupabase.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 String location = rs.getString("nume_locatie") + " (Str. " + rs.getString("strada") + ")";
@@ -40,7 +39,8 @@ public class EventManager {
                 );
 
                 loadCategories(conn, ev);
-                eventsList.add(ev);
+                String key = (ev.getName() + "_" + ev.getLocation() + "_" + ev.getDateTime()).toLowerCase();
+                events.put(key, ev);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -70,16 +70,7 @@ public class EventManager {
         return instance;
     }
 
-    public String getDescription(String numeEveniment) {
-        for (Event e : eventsList) {
-            if (e.getName().equalsIgnoreCase(numeEveniment)) {
-                return e.getDescription();
-            }
-        }
-        return "Description unavailable for: " + numeEveniment;
-    }
-
     public List<Event> getAllEvents() {
-        return eventsList;
+        return new ArrayList<>(events.values());
     }
 }

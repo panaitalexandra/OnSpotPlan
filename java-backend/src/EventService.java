@@ -3,13 +3,13 @@
  * @author Panait Claudia-Alexandra
  */
 public class EventService {
-    private static EventService instanta;
+    private static EventService instance;
 
     private EventService() {}
 
     public static EventService getInstance() {
-        if (instanta == null)
-            instanta = new EventService();
-        return instanta;
+        if (instance == null)
+            instance = new EventService();
+        return instance;
     }
 }

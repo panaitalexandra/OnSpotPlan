@@ -10,7 +10,7 @@ class Ui_Explore(BaseFramelessWindow):
 
     def setupUi(self):
         self.setObjectName("ExploreEventsWindow")
-        self.resize(1300, 1300)
+        self.resize(1300, 1400)
 
         self.content_widget = QtWidgets.QWidget()
         if hasattr(self, 'main_layout'):
@@ -35,7 +35,7 @@ class Ui_Explore(BaseFramelessWindow):
 
         self.header_layout = QtWidgets.QHBoxLayout()
 
-        self.label_logo = QtWidgets.QLabel("EventHub")
+        self.label_logo = QtWidgets.QLabel("OnSpotPlan")
         self.label_logo.setStyleSheet("font-size: 55px; font-weight: bold; color: #1e1b4b; font-family: 'Segoe UI';")
 
         self.btn_profile = QtWidgets.QPushButton("Switch Profile")
@@ -150,4 +150,4 @@ class Ui_Explore(BaseFramelessWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("ExploreEvents", "Explore Events - EventHub"))
+        self.setWindowTitle(_translate("ExploreEvents", "Explore Events - OnSpotPlan"))

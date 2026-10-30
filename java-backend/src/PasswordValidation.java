@@ -17,7 +17,7 @@ public class PasswordValidation {
     }
 
     public static boolean containsSpecial(String parola) {
-        return parola != null && parola.matches(".*[!#$%^*].*");
+        return parola != null && parola.matches(".*[.!#$%^*].*");
     }
     public static boolean validation(String parola) {
         return hasMinLength(parola) && containsUppercase(parola) &&

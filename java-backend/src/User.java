@@ -2,31 +2,21 @@
  *
  * @author Panait Claudia-Alexandra
  */
-import java.io.*;
 import java.util.*;
 
 public class User {
     private int id;
     private List<Profile> profiles;
-    private boolean profile_completed;
     private Person p;
 
     public User(String email, String password){
         p = new Person(email, password);
         this.profiles = new ArrayList<>();
-        this.profile_completed = false;
     }
 
     public User(String last_name, String first_name, String national_id, String region, String city, String phone, String email, String password) throws Exception {
         p = new Person(last_name, first_name, national_id, region, city, phone);
         this.profiles = new ArrayList<>();
-        this.profile_completed = false;
-
-        try{
-            if (!PasswordValidation.validation(password))
-                throw new Exception("Password does not match requirements");
-        }catch(IOException e){ e.printStackTrace(); }
-        
         p.setEmail(email);
         p.setPassword(password);
     }

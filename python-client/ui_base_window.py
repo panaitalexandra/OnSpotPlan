@@ -41,6 +41,7 @@ class BaseFramelessWindow(QtWidgets.QDialog):
         """)
 
         self.title_layout = QtWidgets.QHBoxLayout(self.title_bar)
+        # css trbl vs pyqt5 ltrb
         self.title_layout.setContentsMargins(20, 0, 20, 0)
 
         self.btn_close = QtWidgets.QPushButton("✕")
@@ -69,6 +70,7 @@ class BaseFramelessWindow(QtWidgets.QDialog):
 
         self.btn_close.clicked.connect(QtWidgets.QApplication.instance().quit)
 
+    # pt label-urile de switch between log in - sign up
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
             self.old_pos = event.globalPos()

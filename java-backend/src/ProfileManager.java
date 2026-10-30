@@ -18,7 +18,7 @@ public class ProfileManager {
 
     private void loadProfiles() {
         String sql = "SELECT * FROM profil WHERE id_utilizator = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnectionSupabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, this.userId);
@@ -35,12 +35,12 @@ public class ProfileManager {
                 ));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
     }
 
-    public boolean addProfile(Profile c) throws Exception {
-        Person p = c.getPerson();
+    public boolean addProfile(Profile profile) throws Exception {
+        Person p = profile.getPerson();
 
         if (!isPhoneValid(p.getPhone_number())) {
             throw new RuntimeException("The entered phone number is invalid. It must be between 7 and 15 digits long and can include optional spaces, dashes, or a '+' prefix.");
@@ -53,7 +53,7 @@ public class ProfileManager {
 
         String sql = "INSERT INTO profil (id_utilizator, nume, prenume, cnp, regiune, oras, telefon) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnectionSupabase.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, this.userId);
             pstmt.setString(2, p.getLast_name());
@@ -64,7 +64,7 @@ public class ProfileManager {
             pstmt.setString(7, p.getPhone_number());
 
             pstmt.executeUpdate();
-            profiles.add(c);
+            profiles.add(profile);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -74,45 +74,45 @@ public class ProfileManager {
             throw new Exception("A database error occurred while trying to save the profile: " + e.getMessage());
         }
     }
-    public boolean deleteProfile(int index) {
+    public boolean deleteProfile(int index) throws Exception{
         if (index >= 0 && index < profiles.size()) {
-            Profile c = profiles.get(index);
+            Profile profile = profiles.get(index);
             String sql = "DELETE FROM profil WHERE id_utilizator = ? AND cnp = ?";
 
-            try (Connection conn = DatabaseConnection.getConnection();
+            try (Connection conn = DatabaseConnectionSupabase.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
                 pstmt.setInt(1, this.userId);
-                pstmt.setString(2, c.getPerson().getNationalId());
+                pstmt.setString(2, profile.getPerson().getNationalId());
                 pstmt.executeUpdate();
 
                 profiles.remove(index);
                 return true;
             } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                throw new Exception("Could not delete profile: " + e.getMessage());            }
         }
         return false;
     }
-    public boolean updateProfile(int index, Profile profileNou) throws Exception {
+    public boolean updateProfile(int index, Profile new_profile) throws Exception {
         if (index >= 0 && index < profiles.size()) {
-            Person p = profileNou.getPerson();
+            Person p = new_profile.getPerson();
 
-            if (!isPhoneValid(p.getPhone_number())) {
+            if (!isPhoneValid(p.getPhone_number()))
                 throw new Exception("The entered phone number is invalid. It must be between 7 and 15 digits long and can include optional spaces, dashes, or a '+' prefix.");
-            }
+
             if (p.getNationalId() == null || p.getNationalId().trim().isEmpty())
                 throw new Exception("The National ID field cannot be empty. Please provide a valid identification document number.");
+
             String id = p.getNationalId().trim();
             if (!id.matches("^[a-zA-Z0-9]{5,20}$"))
                 throw new Exception("The National ID format is invalid. It must be between 5 and 20 characters long and contain only letters and numbers (no special characters or spaces).");
 
-            Profile oldProfile = profiles.get(index);
+            Profile old_Profile = profiles.get(index);
 
             String sql = "UPDATE profil SET nume=?, prenume=?, cnp=?, regiune=?, oras=?, telefon=? " +
                     "WHERE id_utilizator = ? AND cnp = ?";
 
-            try (Connection conn = DatabaseConnection.getConnection();
+            try (Connection conn = DatabaseConnectionSupabase.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
                 pstmt.setString(1, p.getLast_name());
@@ -123,15 +123,16 @@ public class ProfileManager {
                 pstmt.setString(6, p.getPhone_number());
 
                 pstmt.setInt(7, this.userId);
-                pstmt.setString(8, oldProfile.getPerson().getNationalId());
+                pstmt.setString(8, old_Profile.getPerson().getNationalId());
 
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected > 0) {
-                    profiles.set(index, profileNou);
+                    profiles.set(index, new_profile);
                     return true;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
+                // 23505 - unique violation rule
                 if ("23505".equals(e.getSQLState()))
                     throw new Exception("This National ID is already registered to another profile in our database.");
                 throw new Exception("A database error occurred while trying to update the profile: " + e.getMessage());
@@ -142,6 +143,7 @@ public class ProfileManager {
     public ArrayList<Profile> getProfileList() {
         return profiles;
     }
+
     private boolean isPhoneValid(String telefon) {
         if (telefon == null)
             return false;

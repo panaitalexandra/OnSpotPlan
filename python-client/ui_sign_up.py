@@ -12,17 +12,20 @@ class Ui_Register(BaseFramelessWindow):
         self.resize(1200, 1300)
 
         self.content_widget = QtWidgets.QWidget()
-        if hasattr(self, 'main_layout'):
-            self.main_layout.addWidget(self.content_widget)
+        self.main_layout.addWidget(self.content_widget) #inheritance
 
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.content_widget)
         self.verticalLayout_2.setContentsMargins(50, 50, 50, 50)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
 
         self.frame = QtWidgets.QFrame(self.content_widget)
-        self.frame.setStyleSheet("background-color: white;\n"
-                                 "border-radius: 20px;\n"
-                                 "border: 1px solid #e0e0e0;")
+        self.frame.setStyleSheet("""
+                    QFrame#frame {
+                        background-color: white;
+                        border-radius: 20px;
+                        border: 1px solid #e0e0e0;
+                    }
+                """)
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
@@ -37,30 +40,17 @@ class Ui_Register(BaseFramelessWindow):
         self.header_layout.setObjectName("header_layout")
 
         self.label_eventHub = QtWidgets.QLabel(self.frame)
-        self.label_eventHub.setStyleSheet("color: #1e1b4b;\n"
-                                          "    font-size: 80px;\n"
-                                          "    font-weight: bold;\n"
-                                          "    font-family: \"Segoe UI\", sans-serif;\n"
-                                          "    background: transparent;\n"
-                                          "    border: none")
+        self.label_eventHub.setStyleSheet("color: #1e1b4b; font-size: 80px; font-weight: bold; font-family: 'Segoe UI', sans-serif; background: transparent; border: none;")
         self.label_eventHub.setObjectName("label_eventHub")
         self.header_layout.addWidget(self.label_eventHub)
 
         self.label_welcome = QtWidgets.QLabel(self.frame)
-        self.label_welcome.setStyleSheet("color: #0f172a;\n"
-                                         "    font-size: 55px;\n"
-                                         "    font-weight: bold;\n"
-                                         "    background: transparent;\n"
-                                         "    border: none")
+        self.label_welcome.setStyleSheet("color: #0f172a; font-size: 55px; font-weight: bold; background: transparent; border: none;")
         self.label_welcome.setObjectName("label_welcome")
         self.header_layout.addWidget(self.label_welcome)
 
         self.label_details = QtWidgets.QLabel(self.frame)
-        self.label_details.setStyleSheet("color: #64748b;\n"
-                                         "    font-size: 28px;\n"
-                                         "    font-weight: 400;\n"
-                                         "    background: transparent;\n"
-                                         "    border: none")
+        self.label_details.setStyleSheet("color: #64748b; font-size: 28px; font-weight: 400; background: transparent; border: none")
         self.label_details.setObjectName("label_details")
         self.header_layout.addWidget(self.label_details)
 
@@ -108,14 +98,14 @@ class Ui_Register(BaseFramelessWindow):
         self.hints_layout.setSpacing(5)
 
         self.password_hints = {
-            "length": QtWidgets.QLabel("● Minim 8 caractere"),
-            "upper": QtWidgets.QLabel("● Cel puțin o majusculă"),
-            "digit": QtWidgets.QLabel("● Cel puțin o cifră"),
-            "special": QtWidgets.QLabel("● Un caracter special (!, #, $, %, ^, *)")
+            "length": QtWidgets.QLabel("● 8+ characters"),
+            "upper": QtWidgets.QLabel("● 1+ uppercase letter"),
+            "digit": QtWidgets.QLabel("● 1+ number"),
+            "special": QtWidgets.QLabel("● 1+ special character")
         }
 
         for hint in self.password_hints.values():
-            hint.setStyleSheet("color: #94a3b8; font-size: 18px;")
+            hint.setStyleSheet("color: #94a3b8; font-size: 18px; border: none; background: transparent;")
             self.hints_layout.addWidget(hint)
 
         self.verticalLayout.addLayout(self.input_Layout)
@@ -129,17 +119,17 @@ class Ui_Register(BaseFramelessWindow):
 
         self.pushButton_register = QtWidgets.QPushButton(self.frame)
         self.pushButton_register.setMinimumHeight(90)
-        self.pushButton_register.setStyleSheet("QPushButton {\n"
-                                            "    background-color: #1e1b4b;\n"
-                                            "    color: white;\n"
-                                            "    font-size: 32px;\n"
-                                            "    font-weight: bold;\n"
-                                            "    border-radius: 15px;\n"
-                                            "    border: none;\n"
-                                            "}\n"
-                                            "QPushButton:hover {\n"
-                                            "    background-color: #2e2a70;\n"
-                                            "}")
+        self.pushButton_register.setStyleSheet("QPushButton {"
+                                               "    background-color: #1e1b4b;"
+                                               "    color: white;"
+                                               "    font-size: 32px;"
+                                               "    font-weight: bold;"
+                                               "    border-radius: 15px;"
+                                               "    border: none;"
+                                               "}"
+                                               "QPushButton:hover {"
+                                               "    background-color: #2e2a70;"
+                                               "}")
         self.pushButton_register.setObjectName("pushButton_register")
         self.pushButton_register.setCursor(QtCore.Qt.PointingHandCursor)
         self.footer_layout.addWidget(self.pushButton_register)
@@ -158,8 +148,8 @@ class Ui_Register(BaseFramelessWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("Dialog", "EventHub - Create Account"))
-        self.label_eventHub.setText(_translate("Dialog", "EventHub"))
+        self.setWindowTitle(_translate("Dialog", "OnSpotPlan - Create Account"))
+        self.label_eventHub.setText(_translate("Dialog", "OnSpotPlan"))
         self.label_welcome.setText(_translate("Dialog", "Join Us"))
         self.label_details.setText(_translate("Dialog", "Please enter your details to create a new account"))
         self.label_email.setText(_translate("Dialog", "Email Address"))
@@ -167,10 +157,3 @@ class Ui_Register(BaseFramelessWindow):
         self.label_confirm_passwd.setText(_translate("Dialog", "Confirm Password"))
         self.pushButton_register.setText(_translate("Dialog", "Sign Up"))
         self.label_back_to_login.setText(_translate("Dialog", "Already have an account? Log in"))
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    ui = Ui_Register()
-    ui.show()
-    sys.exit(app.exec_())

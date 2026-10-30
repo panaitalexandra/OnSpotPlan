@@ -21,10 +21,10 @@ public class Gateway {
     public BookingManager getBookingManager(int userId) {
         return BookingManager.getInstance(userId);
     }
+
     public static void main(String[] args) {
         GatewayServer server = new GatewayServer(new Gateway());
         server.start();
-        System.out.println("Java is on - run py!");
+        System.out.println("Java is on - run py");
     }
 }
-

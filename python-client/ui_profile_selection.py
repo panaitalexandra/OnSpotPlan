@@ -167,18 +167,18 @@ class Ui_ProfileSelection(BaseFramelessWindow):
 
         self.btn_back.setStyleSheet("""
                 QPushButton#BackBtn {
-                    background-color: #f3f4f6;       /* Fundal alb-murdar / gri discret */
-                    color: #1e1b4b;                  /* Textul cu acel albastru închis regal */
+                    background-color: #f3f4f6;       
+                    color: #1e1b4b;                  
                     font-size: 24px;
                     font-weight: bold;
-                    border: 2px solid #cbd5e1;       /* Margine fină, curată */
-                    border-radius: 18px;             /* Rotunjire modernă identică cu butoanele de sus */
-                    padding: 18px 0px;               /* Înalt și confortabil la apăsare */
-                    text-decoration: none;           /* Am eliminat complet acel underline învechit */
+                    border: 2px solid #cbd5e1;       
+                    border-radius: 18px;             
+                    padding: 18px 0px;              
+                    text-decoration: none;           
                 }
                 QPushButton#BackBtn:hover {
-                    background-color: #f1f5f9;       /* Culoarea de hover solicitată de tine */
-                    border-color: #1e1b4b;           /* La hover, marginea se aprinde subtil în culoarea brandului */
+                    background-color: #f1f5f9;       
+                    border-color: #1e1b4b;           
                 }
             """)
 

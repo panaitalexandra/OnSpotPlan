@@ -110,8 +110,8 @@ class Ui_Event(BaseFramelessWindow):
         self.info_layout.addWidget(self.lbl_title)
 
         try:
-            locatie = self.event_java.getLocatie()
-            oras = self.event_java.getOras()
+            locatie = self.event_java.getLocation()
+            oras = self.event_java.getCity()
             locatie_completa = f"📍 {locatie}, {oras}"
         except Exception as e:
             locatie_completa = f"📍 {self.event_java.getLocation()}"
@@ -230,7 +230,7 @@ class Ui_Event(BaseFramelessWindow):
                 border-color: #1e1b4b; 
             }
         """)
-        self.btn_back.clicked.connect(self.close)
+        self.btn_back.clicked.connect(self.handle_back_to_explore)
 
         self.btn_proceed = QtWidgets.QPushButton("BOOK TICKETS NOW")
         self.btn_proceed.setFixedSize(420, 80)
@@ -252,7 +252,15 @@ class Ui_Event(BaseFramelessWindow):
 
     def open_booking(self):
         categorie_selectata = self.combo_bilete.currentData()
+        self.hide()
+        if hasattr(self, 'parent_win') and self.parent_win is not None:
+            self.parent_win.hide()
         self.booking_win = Ui_BookingApp(self.gateway, self.event_java, self.active_client, categorie_selectata,
                                          self.user_email)
+        self.booking_win.parent_win = self
         self.booking_win.show()
+
+    def handle_back_to_explore(self):
+        if hasattr(self, 'parent_win') and self.parent_win is not None:
+            self.parent_win.show()
         self.close()

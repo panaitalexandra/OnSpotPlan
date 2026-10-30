@@ -149,9 +149,9 @@ class ProfileSelectionApp(Ui_ProfileSelection):
 
         if hasattr(self, 'btn_back_explore'):
             self.btn_back_explore.clicked.connect(self.handle_back_to_explore)
-        elif hasattr(self, 'btn_back'):  # Alternativa 1
+        elif hasattr(self, 'btn_back'):
             self.btn_back.clicked.connect(self.handle_back_to_explore)
-        elif hasattr(self, 'btn_close'):  # Alternativa 2
+        elif hasattr(self, 'btn_close'):
             self.btn_close.clicked.connect(self.handle_back_to_explore)
 
         self.load_profiles()
@@ -246,11 +246,30 @@ class ProfileSelectionApp(Ui_ProfileSelection):
                     self.popup.show()
                     self.load_profiles()
                 else:
-                    self.popup = Ui_Popup("Could not delete profile.", title="Error")
+                    self.popup = Ui_Popup(
+                        "This profile cannot be deleted because it has active bookings!",
+                        title="Action Blocked"
+                    )
                     self.popup.show()
 
             except Exception as e:
-                self.popup = Ui_Popup(f"Java error: {e}", title="System Error")
+                import traceback
+
+                full_error_string = str(e)
+                from py4j.protocol import Py4JJavaError
+                if isinstance(e, Py4JJavaError) and e.java_exception is not None:
+                    msg_java = e.java_exception.getMessage()
+                    if msg_java:
+                        full_error_string += " " + msg_java
+
+                if "foreign key" in full_error_string.lower() or "violates foreign key constraint" in full_error_string.lower():
+                    display_text = "This profile cannot be deleted because it has active bookings! Please cancel all bookings associated with this profile first."
+                    title_text = "Action Blocked"
+                else:
+                    display_text = f"Java error: {full_error_string[:120]}"
+                    title_text = "System Error"
+
+                self.popup = Ui_Popup(display_text, title=title_text)
                 self.popup.show()
 
     def handle_view_details(self):
@@ -358,32 +377,33 @@ class CompleteProfileApp(Ui_CompleteProfile):
                 )
                 self.popup.exec_()
 
+
         except Exception as e:
-            import traceback
-            print("--- DETALII EROARE ÎN CONSOLĂ ---")
-            traceback.print_exc()
+            display_text = str(e)
+            title_text = "Validation Error"
+            from py4j.protocol import Py4JJavaError
 
-            if hasattr(e, 'java_exception') and e.java_exception is not None:
+            if isinstance(e, Py4JJavaError) and e.java_exception is not None:
+
                 display_text = e.java_exception.getMessage()
-            else:
-                err_msg = str(e)
-                display_text = err_msg.split(":", 1)[1].strip() if ":" in err_msg else err_msg
 
-            if not display_text or any(x in str(e).lower() for x in ["javapackage", "py4jerror"]) and not hasattr(e,
-                                                                                                                  'java_exception'):
-                display_text = "A communication error occurred with the database. Please make sure the input data format is acceptable."
-                title_text = "System Error"
-            else:
-                if "already registered" in display_text.lower():
+            if display_text:
+
+                if "already registered" in display_text.lower() or "duplicate" in display_text.lower():
                     title_text = "Duplicate Profile"
-                elif "phone number" in display_text.lower():
+                elif "phone number" in display_text.lower() or "invalid" in display_text.lower():
                     title_text = "Invalid Phone"
                 elif "national id" in display_text.lower() or "cnp" in display_text.lower():
+
                     title_text = "Invalid ID"
-                else:
-                    title_text = "Validation Error"
+            else:
+
+                display_text = "A communication error occurred with the database. Please make sure the input data format is acceptable."
+
+                title_text = "System Error"
 
             self.popup = Ui_Popup(display_text, title=title_text, parent=self)
+
             self.popup.exec_()
 
     def handle_skip(self):

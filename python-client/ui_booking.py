@@ -199,7 +199,7 @@ class Ui_BookingApp(BaseFramelessWindow):
                 border-color: #1e1b4b;
             }
         """)
-        self.btn_back.clicked.connect(self.close)
+        self.btn_back.clicked.connect(self.handle_cancel)
         self.right_container.addWidget(self.btn_back)
 
         self.layout_grid.addLayout(self.right_container, 1, 1)
@@ -280,8 +280,37 @@ class Ui_BookingApp(BaseFramelessWindow):
 
     def handle_booking(self):
         selected_item = self.list_slots.currentItem()
+        if not selected_item:
+            return
 
         try:
+            client_manager = self.gateway.jvm.BookingManager.getInstance(
+                self.gateway.jvm.UserManager.getInstance().getIdByEmail(
+                    self.user_email))
+
+            try:
+                profile_manager = self.gateway.entry_point.getProfileManager(self.user_email)
+                if profile_manager is None or profile_manager.getProfileList().isEmpty():
+                    self.popup = Ui_Popup(
+                        "To make a booking, you must complete your profile first. Please go to the profile section and fill in your details.",
+                        title="Profile Required",
+                        parent=self
+                    )
+                    self.popup.show()
+                    return
+            except Exception as e_profile:
+                print(f"Nota: Eroare la verificarea profile_list optionala: {e_profile}")
+                if self.active_client is None:
+                    self.popup = Ui_Popup(
+                        "To make a booking, you must complete your profile first. Please go to the profile section and fill in your details.",
+                        title="Profile Required",
+                        parent=self
+                    )
+                    self.popup.show()
+                    return
+
+            # === SFARSIT VALIDARE ===
+
             q_date = self.calendar.selectedDate()
             java_date = self.gateway.jvm.java.time.LocalDate.of(q_date.year(), q_date.month(), q_date.day())
 
@@ -294,39 +323,64 @@ class Ui_BookingApp(BaseFramelessWindow):
                 self.event_java,
                 java_date,
                 java_time,
-                self.categorie_selectata
+                self.categorie_selectata,
+                "PENDING",
+                ""
             )
 
             user_id = self.gateway.jvm.UserManager.getInstance().getIdByEmail(self.user_email)
-
-            if user_id == -1:
-                self.popup = Ui_Popup(f"User with email '{self.user_email}' was not found in the database!",
-                                        title="Session Error")
-                self.popup.show()
-                return
-
             manager_prog = self.gateway.jvm.BookingManager.getInstance(user_id)
 
+            # Executăm rezervarea în backend-ul Java
             if manager_prog.addBooking(new_booking):
-                self.hide()
+                try:
+                    manager_prog.refreshBookings()
+                except Exception as e_refresh:
+                    print(f"Nota: Eroare intampinata la reincarcarea datelor din DB: {e_refresh}")
 
+                explore_window = None
+                if hasattr(self, 'parent_win') and self.parent_win is not None:
+                    if hasattr(self.parent_win, 'parent_win'):
+                        explore_window = self.parent_win.parent_win
+                    self.parent_win.close()
+
+                self.hide()
                 self.success_screen = Ui_EventBook(
                     self.gateway, self.event_java, self.active_client,
                     self.categorie_selectata, self.user_email
                 )
+                self.success_screen.explore_win = explore_window
                 self.success_screen.show()
                 self.close()
+            else:
+                # === MODIFICAREA SOLICITATĂ: AICI SE PRINDE DUPLICATUL CÂND JAVA RETURNEAZĂ FALSE ===
+                self.popup = Ui_Popup(
+                    "This profile holder has already booked a ticket for this specific event session!",
+                    title="Already Booked",
+                    parent=self
+                )
+                if hasattr(self.popup, 'exec_'):
+                    self.popup.exec_()
+                else:
+                    self.popup.show()
 
         except Exception as e:
-            traceback.print_exc()
-            err_msg = str(e)
+            full_error_string = str(e)
+            from py4j.protocol import Py4JJavaError
+            if isinstance(e, Py4JJavaError):
+                if e.java_exception is not None:
+                    msg_java = e.java_exception.getMessage()
+                    if msg_java:
+                        full_error_string += " " + msg_java
+                    full_error_string += " " + e.java_exception.toString()
 
-            if hasattr(e, 'java_exception') and e.java_exception is not None:
-                display_text = e.java_exception.getMessage()
-            else:
-                display_text = err_msg
-
-            if "DUPLICATE_BOOKING" in display_text or "already booked" in display_text.lower():
+            if "Could not find profile" in full_error_string:
+                self.popup = Ui_Popup(
+                    "To make a booking, you must complete your profile first. Please go to the profile section and fill in your details.",
+                    title="Profile Required",
+                    parent=self
+                )
+            elif "DUPLICATE_BOOKING" in full_error_string or "already booked" in full_error_string.lower():
                 self.popup = Ui_Popup(
                     "This profile holder has already booked a ticket for this specific event session!",
                     title="Already Booked",
@@ -334,8 +388,17 @@ class Ui_BookingApp(BaseFramelessWindow):
                 )
             else:
                 self.popup = Ui_Popup(
-                    f"An error occurred while confirming your booking:\n{display_text}",
+                    f"An error occurred while confirming your booking:\n{full_error_string[:150]}...",
                     title="System Error",
                     parent=self
                 )
-            self.popup.exec_()
+
+            if hasattr(self.popup, 'exec_'):
+                self.popup.exec_()
+            else:
+                self.popup.show()
+
+    def handle_cancel(self):
+        if hasattr(self, 'parent_win') and self.parent_win is not None:
+            self.parent_win.show()
+        self.close()

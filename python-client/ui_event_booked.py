@@ -124,5 +124,13 @@ class Ui_EventBook(BaseFramelessWindow):
             }
             QPushButton:hover { background-color: #2e2a70; }
         """)
-        self.btn_done.clicked.connect(self.close)
+        self.btn_done.clicked.connect(self.handle_done)
         self.layout_main.addWidget(self.btn_done)
+
+    def handle_done(self):
+        # Dacă am primit referința către Explore, o reafișăm pe ecran
+        if hasattr(self, 'explore_win') and self.explore_win is not None:
+            self.explore_win.show()
+
+        # Închidem fereastra biletului
+        self.close()

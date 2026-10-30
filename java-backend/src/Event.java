@@ -13,9 +13,6 @@ public class Event implements Serializable {
     private List<TicketCategories> ticketCategories;
     private String imagePath = "resources/placeholder.jpg";
 
-    public String getCaleImagine() {
-        return imagePath;
-    }
 
     public Event(int id, String name, String description, String type, String locationInfo, String dateTimeInfo, String city) {        this.id = id;
         this.name = name;

@@ -152,7 +152,7 @@ class Ui_Authentification(BaseFramelessWindow):
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("Dialog", "EventHub Login"))
-        self.label_eventHub.setText(_translate("Dialog", "EventHub"))
+        self.label_eventHub.setText(_translate("Dialog", "OnSpotPlan"))
         self.label_welcome.setText(_translate("Dialog", "Welcome"))
         self.label_details.setText(_translate("Dialog", "Please enter your details to log in"))
         self.label_email.setText(_translate("Dialog", "Email Address"))

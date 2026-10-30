@@ -5,13 +5,7 @@
 public class Person {
     private String last_name, first_name, email, password, phone_number;
     private IdentityCard identity_card;
-    
-    public Person(String last_name, String first_name, String national_id, String phone_number){
-        this.last_name = last_name;
-        this.first_name = first_name;
-        this.identity_card = new IdentityCard(national_id);
-        this.phone_number = phone_number;
-    }
+
     public Person(String last_name, String first_name, String national_id, String region, String city, String phone_number){
         this.last_name = last_name;
         this.first_name = first_name;

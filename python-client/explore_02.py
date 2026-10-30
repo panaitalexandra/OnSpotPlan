@@ -127,6 +127,15 @@ class ExploreApp(Ui_Explore):
             client_manager = self.gateway.getProfileManager(self.current_user_email)
             client_list = client_manager.getProfileList()
 
+            # MODIFICARE: Dacă avem deja un profil activ trimis de ecranul de selecție, îl folosim direct!
+            if self.active_client is not None:
+                p = self.active_client.getPerson()
+                full_name = f"{p.getLast_name()} {p.getFirst_name()}"
+                self.lbl_active_user.setText(f"Signed in as, {full_name}")
+                self.lbl_active_user.setStyleSheet("color: #1e1b4b; font-weight:500; font-size: 26px;")
+                return # Oprim execuția aici ca să nu-l suprascrie cu indexul 0
+
+            # Dacă NU avem un profil selectat (e prima pornire), îl luăm pe primul din baza de date
             if not client_list.isEmpty():
                 self.active_client = client_list.get(0)
                 p = self.active_client.getPerson()
@@ -322,6 +331,11 @@ class ExploreApp(Ui_Explore):
 
     def open_event_details(self, event_java):
         self.detail_win = Ui_Event(self.gateway, event_java, self.active_client, self.current_user_email)
+
+        self.detail_win.parent_win = self
+
+        self.hide()
+
         self.detail_win.show()
 
 
